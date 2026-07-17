@@ -55,12 +55,14 @@ export type TenantSeo = {
 
 /** Full resolved tenant configuration used across the app. */
 export type TenantConfig = {
-  /** Org id sent as the `clientname` header. */
+  /** Organization id — BFF/admin header `clientname` (one org, many sites). */
   clientName: string;
-  /** Website label — query param + `label` header for blog scoping. */
+  /** Website label from B2B Website Setup — BFF `label` header + query. */
   label: string;
-  /** Public origin for SEO (from host mapping). */
+  /** Public site root for SEO (origin + pathPrefix, no trailing slash). */
   siteUrl: string;
+  /** Mount prefix (`""` for `/`, or `blog` / `blogs` without leading slash stored normalized). */
+  pathPrefix: string;
   brand: TenantBrand;
   theme: ThemeConfig;
   copy: TenantCopy;
@@ -85,7 +87,7 @@ export type TenantConfig = {
  * Theme CSS tokens load from `src/data/themes/<themeKey>.json`. */
 export type ClientDefinition = Omit<
   TenantConfig,
-  "clientName" | "label" | "theme" | "siteUrl"
+  "clientName" | "label" | "theme" | "siteUrl" | "pathPrefix"
 > & {
   clientName?: string;
   label?: string;

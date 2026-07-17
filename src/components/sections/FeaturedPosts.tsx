@@ -3,6 +3,7 @@ import Link from "next/link";
 import { formatBlogDate } from "@/services/blogs";
 import { resolvePostImage } from "@/lib/images";
 import { resolveBlogSeo } from "@/lib/seo";
+import { siteHref } from "@/lib/paths";
 import type { BlogListItem } from "@/types/blog";
 
 type FeaturedPostsProps = {
@@ -23,6 +24,7 @@ export async function FeaturedPosts({
   const seo = await resolveBlogSeo(post);
   const imageUrl = resolvePostImage(post) || seo.image;
   const date = formatBlogDate(post.publishedDate || post.updatedDate);
+  const href = await siteHref(`/blog/${post.slug}`);
 
   return (
     <section className="featured-section px-5 pt-12 sm:px-8 sm:pt-16">
@@ -34,7 +36,7 @@ export async function FeaturedPosts({
           {heading}
         </h2>
 
-        <Link href={`/blog/${post.slug}`} className="featured-card featured-card--compact group">
+        <Link href={href} className="featured-card featured-card--compact group">
           {imageUrl ? (
             <div className="featured-card__thumb">
               <Image

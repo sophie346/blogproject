@@ -1,6 +1,7 @@
 import { BlogGrid } from "@/components/common/BlogGrid";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Pagination } from "@/components/common/Pagination";
+import { siteHref } from "@/lib/paths";
 import type { BlogListItem } from "@/types/blog";
 
 type LatestPostsProps = {
@@ -15,7 +16,7 @@ type LatestPostsProps = {
   emptyMessage: string;
 };
 
-export function LatestPosts({
+export async function LatestPosts({
   posts,
   page,
   totalcount,
@@ -26,6 +27,8 @@ export function LatestPosts({
   emptyTitle,
   emptyMessage,
 }: LatestPostsProps) {
+  const homePath = await siteHref("/");
+
   return (
     <section
       id="stories"
@@ -72,6 +75,7 @@ export function LatestPosts({
               page={page}
               totalcount={totalcount}
               limit={limit}
+              basePath={homePath}
               hash="#stories"
             />
           </>

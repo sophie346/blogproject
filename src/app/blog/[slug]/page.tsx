@@ -15,6 +15,7 @@ import {
 } from "@/services/blogs";
 import { getSiteConfig } from "@/lib/config";
 import { resolvePostImage } from "@/lib/images";
+import { siteHref } from "@/lib/paths";
 import {
   absoluteUrl,
   buildArticleJsonLd,
@@ -79,6 +80,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const keywords = parseKeywords(post.seo?.metaKeywords);
   const related = await getRelatedBlogs(post.slug, 3);
   const shareUrl = await absoluteUrl(`/blog/${post.slug}`);
+  const homeHref = await siteHref("/");
+  const storiesHref = await siteHref("/#stories");
 
   return (
     <article itemScope itemType="https://schema.org/Article">
@@ -113,7 +116,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           <nav aria-label="Breadcrumb" className="mb-8">
             <ol className="flex flex-wrap items-center gap-2 font-display text-sm text-steel-bright">
               <li>
-                <Link href="/" className="transition-colors hover:text-amber-soft">
+                <Link href={homeHref} className="transition-colors hover:text-amber-soft">
                   Home
                 </Link>
               </li>
@@ -122,7 +125,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
               </li>
               <li>
                 <Link
-                  href="/#stories"
+                  href={storiesHref}
                   className="transition-colors hover:text-amber-soft"
                 >
                   Stories
@@ -218,7 +221,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
         <div className="mt-16">
           <Link
-            href="/#stories"
+            href={storiesHref}
             className="inline-flex items-center gap-2 border border-amber/50 bg-amber/10 px-5 py-3 font-display text-sm font-medium text-amber-soft transition hover:border-amber hover:bg-amber/20"
           >
             Browse all stories

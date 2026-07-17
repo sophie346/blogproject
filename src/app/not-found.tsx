@@ -1,8 +1,14 @@
 import Link from "next/link";
-import { getTenant } from "@/lib/tenant";
+import { siteHref } from "@/lib/paths";
+import { getTenantOrNull } from "@/lib/tenant";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export default async function NotFound() {
-  const { copy } = await getTenant();
+  const tenant = await getTenantOrNull();
+  if (!tenant) return <ComingSoon />;
+
+  const { copy } = tenant;
+  const home = await siteHref("/");
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start justify-center gap-4 px-5 py-24 sm:px-8">
@@ -16,7 +22,7 @@ export default async function NotFound() {
         {copy.notFoundMessage}
       </p>
       <Link
-        href="/"
+        href={home}
         className="mt-2 inline-flex items-center gap-2 rounded-xl border border-amber/45 bg-amber/15 px-4 py-2.5 font-display text-sm font-semibold text-amber-soft transition hover:border-amber hover:bg-amber/25"
       >
         {copy.notFoundCta}

@@ -1,8 +1,9 @@
-import { getApiConfig as getTenantApiConfig, getTenant } from "./tenant";
+import { getApiConfig as getTenantApiConfig, getTenant, getTenantOrNull } from "./tenant";
 
 /** Brand config derived from the active (Host-resolved) tenant. */
 export async function getSiteConfig() {
-  const { brand, siteUrl } = await getTenant();
+  const tenant = await getTenant();
+  const { brand, siteUrl } = tenant;
   return {
     name: brand.name,
     alternateName: brand.alternateName || brand.name.toLowerCase(),
@@ -16,4 +17,4 @@ export async function getSiteConfig() {
 }
 
 export const getApiConfig = getTenantApiConfig;
-export { getTenant };
+export { getTenant, getTenantOrNull };

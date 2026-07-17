@@ -5,15 +5,37 @@ import { getValidImageUrl, resolvePostImage } from "./images";
 import { getTenant } from "./tenant";
 import type { BlogDetail, BlogListItem } from "@/types/blog";
 
+/** Public site root (origin + pathPrefix), no trailing slash. */
 export async function getSiteUrl() {
   const { siteUrl } = await getSiteConfig();
   return siteUrl.replace(/\/$/, "");
 }
 
-export async function absoluteUrl(path = "/") {
-  const base = await getSiteUrl();
-  if (!path || path === "/") return `${base}/`;
-  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+/**
+ * Absolute URL for an *internal* app path (`/`, `/blog/slug`, `/feed.xml`).
+ * Uses siteUrl as the mounted blog root (already includes pathPrefix).
+ */
+export async function absoluteUrl(appPath = "/") {
+  const tenant = await getTenant();
+  const base = tenant.siteUrl.replace(/\/$/, "");
+  const prefix = tenant.pathPrefix || "";
+
+  if (!appPath || appPath === "/") return `${base}/`;
+
+  // Path relative to the mounted site root
+  let relative: string;
+  if (appPath.startsWith("/blog/")) {
+    relative = appPath.slice("/blog".length); // /slug
+  } else {
+    relative = appPath.startsWith("/") ? appPath : `/${appPath}`;
+  }
+
+  // When site is at domain root, keep /blog/slug public shape for articles
+  if ((!prefix || prefix === "/") && appPath.startsWith("/blog/")) {
+    return `${base}${appPath}`;
+  }
+
+  return `${base}${relative.startsWith("/") ? relative : `/${relative}`}`;
 }
 
 export async function getSocialSameAs() {
@@ -220,8 +242,9 @@ export async function buildHomeMetadata(options: {
 }
 
 export async function getPaginationHref(page: number) {
-  if (page <= 1) return absoluteUrl("/");
-  return absoluteUrl(`/?page=${page}`);
+  const base = await getSiteUrl();
+  if (page <= 1) return `${base}/`;
+  return `${base}/?page=${page}`;
 }
 
 export async function getPaginationRelLinks(page: number, totalPages: number) {

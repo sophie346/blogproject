@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BlogGrid } from "@/components/common/BlogGrid";
 import { EmptyState } from "@/components/common/EmptyState";
+import { siteHref } from "@/lib/paths";
 import type { BlogListItem } from "@/types/blog";
 
 type ArchiveSectionProps = {
@@ -13,7 +14,7 @@ type ArchiveSectionProps = {
 };
 
 /** Shared layout for category/tag/author archive pages. */
-export function ArchiveSection({
+export async function ArchiveSection({
   eyebrow,
   title,
   description,
@@ -21,13 +22,15 @@ export function ArchiveSection({
   emptyTitle,
   emptyMessage,
 }: ArchiveSectionProps) {
+  const homeHref = await siteHref("/");
+
   return (
     <section className="archive-section px-5 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto w-full max-w-6xl">
         <nav aria-label="Breadcrumb" className="mb-8">
           <ol className="flex flex-wrap items-center gap-2 font-display text-sm text-steel-bright">
             <li>
-              <Link href="/" className="transition-colors hover:text-amber-soft">
+              <Link href={homeHref} className="transition-colors hover:text-amber-soft">
                 Home
               </Link>
             </li>

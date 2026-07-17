@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Source_Serif_4, Syne } from "next/font/google";
+import { ComingSoon } from "@/components/ComingSoon";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { getSiteConfig } from "@/lib/config";
-import { getTenant } from "@/lib/tenant";
+import { getTenantOrNull } from "@/lib/tenant";
 import { themeTokensToStyle } from "@/lib/theme";
 import { absoluteUrl, getDefaultOgImage, getSiteUrl } from "@/lib/seo";
 import "./globals.css";
@@ -21,6 +22,15 @@ const sourceSerif = Source_Serif_4({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getTenantOrNull();
+  if (!tenant) {
+    return {
+      title: "Coming soon",
+      description: "This site isn’t available yet.",
+      robots: { index: false, follow: false },
+    };
+  }
+
   const siteConfig = await getSiteConfig();
   const ogImage = await getDefaultOgImage();
   const siteUrl = await getSiteUrl();
@@ -91,7 +101,22 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const tenant = await getTenant();
+  const tenant = await getTenantOrNull();
+
+  if (!tenant) {
+    return (
+      <html
+        lang="en"
+        className={`${syne.variable} ${sourceSerif.variable} h-full antialiased`}
+        suppressHydrationWarning
+      >
+        <body className="min-h-full" suppressHydrationWarning>
+          <ComingSoon />
+        </body>
+      </html>
+    );
+  }
+
   const siteConfig = await getSiteConfig();
   const themeStyle = themeTokensToStyle(tenant.theme.tokens);
 

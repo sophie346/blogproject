@@ -1,19 +1,40 @@
-# OneAuto Blog (Blog1CA)
+# Multi-tenant blog (`commonblog`)
 
-Next.js multi-tenant blog. Tenant identity comes from the request **Host** via `src/constants/tenants.ts` (no `.env`).
+Host **+ path prefix** select the site. BFF identity matches ChannelAdmin:
 
-## Clients
+| Field | Header | Meaning |
+|-------|--------|---------|
+| `clientName` | `clientname` | Organization |
+| `label` | `label` | Website (one org → many sites) |
 
-Defined in `TENANTS` inside `src/constants/tenants.ts`:
+Unknown Host/path → **Coming soon**.
 
-| Key | `clientName` header | `label` |
-|-----|---------------------|---------|
-| `oneauto` | `oneauto` | `oneauto` |
-| `nexus` | `1p0248qcm3j1k401` | `nexus` |
+## Current mounts (`src/constants/tenants.ts`)
 
-Host routing is in `TENANT_BY_HOST` (e.g. `onetruckparts.com` → oneauto, `nexustruckupgrades.com` → nexus). `localhost` → oneauto.
+| URL | Org | Label |
+|-----|-----|-------|
+| `http://localhost:3000/` | `oneauto` | `oneauto` |
+| `http://localhost:3000/blog` | `oneauto` | `oneauto` |
+| `https://onetruckparts.com/blog` | `oneauto` | `oneauto` |
+| `https://nexustruckupgrades.com/blog` | `1p0248qcm3j1k401` | `nexus` |
 
-API base: `BLOG_API_BASE` in the same file.
+## Multiple blogs on one domain
+
+Add another row in `SITES` with a different `pathPrefix` + `label`:
+
+```ts
+{
+  id: "oneauto-blogs2",
+  hosts: ["localhost", "onetruckparts.com", "www.onetruckparts.com"],
+  pathPrefix: "/blogs2",
+  themeKey: "oneauto",
+  clientName: "oneauto",
+  label: "second-website-label",
+  siteUrl: "https://onetruckparts.com/blogs2",
+},
+```
+
+Then `/blogs` and `/blogs2` (or `/blog` + `/blogs2`) each send their own `clientname` + `label` to the BFF.
 
 ## Setup
 
@@ -22,24 +43,10 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+- [http://localhost:3000/](http://localhost:3000/) → oneauto  
+- [http://localhost:3000/blog](http://localhost:3000/blog) → oneauto  
 
-## Routes
+## Deploy
 
-- `/` — hero + paginated blog list
-- `/blog/[slug]` — article detail with SEO metadata
-- `/api/health` — GKE / LB health probe
-
-## Deploy (GKE)
-
-- **Branch:** `cicd-prod` → Cloud Build (`cloudbuild.yaml`)
-- **Image:** `gcr.io/gentle-epoch-277301/commonblog:latest`
-- **Deployment:** `commonblog` (manifest lives in onechanneladmin-latest `deploymentsAll/ui/deployment-commonblog.yaml`)
-
-First-time apply (from monorepo):
-
-```bash
-kubectl apply -f deploymentsAll/ui/deployment-commonblog.yaml
-```
-
-Then push to `cicd-prod` (or run `gcloud builds submit --config=cloudbuild.yaml`).
+- Branch `cicd-prod` → trigger `commonblog-ui-prod`
+- Image / Deployment: `commonblog`

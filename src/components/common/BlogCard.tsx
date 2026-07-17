@@ -3,6 +3,7 @@ import Link from "next/link";
 import { formatBlogDate } from "@/services/blogs";
 import { resolvePostImage } from "@/lib/images";
 import { absoluteUrl, parseKeywords, resolveBlogSeo } from "@/lib/seo";
+import { siteHref } from "@/lib/paths";
 import type { BlogListItem } from "@/types/blog";
 
 type BlogCardProps = {
@@ -21,7 +22,7 @@ export async function BlogCard({ post, index = 0 }: BlogCardProps) {
   const seo = await resolveBlogSeo(post);
   const imageUrl = resolvePostImage(post) || seo.image;
   const category = resolveCategory(post);
-  const href = `/blog/${post.slug}`;
+  const href = await siteHref(`/blog/${post.slug}`);
   const delayClass =
     index % 3 === 1
       ? "fade-up-delay-1"

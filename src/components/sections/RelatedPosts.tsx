@@ -2,13 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatBlogDate } from "@/services/blogs";
 import { resolvePostImage } from "@/lib/images";
+import { siteHref } from "@/lib/paths";
 import type { BlogListItem } from "@/types/blog";
 
 type RelatedPostsProps = {
   posts: BlogListItem[];
 };
 
-export function RelatedPosts({ posts }: RelatedPostsProps) {
+export async function RelatedPosts({ posts }: RelatedPostsProps) {
   if (!posts.length) return null;
 
   return (
@@ -20,13 +21,15 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
         More stories
       </h2>
       <ul className="related-posts__list">
-        {posts.map((post) => {
+        {await Promise.all(
+          posts.map(async (post) => {
           const date = formatBlogDate(post.publishedDate || post.updatedDate);
           const imageUrl = resolvePostImage(post);
+          const href = await siteHref(`/blog/${post.slug}`);
           return (
             <li key={post._id || post.slug}>
               <Link
-                href={`/blog/${post.slug}`}
+                href={href}
                 className="related-posts__card group"
               >
                 {imageUrl ? (
@@ -63,7 +66,8 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
               </Link>
             </li>
           );
-        })}
+        })
+        )}
       </ul>
     </section>
   );

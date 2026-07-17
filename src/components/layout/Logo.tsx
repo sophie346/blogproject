@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { siteHref } from "@/lib/paths";
 import { getTenant } from "@/lib/tenant";
 
 type LogoProps = {
@@ -7,13 +8,14 @@ type LogoProps = {
   className?: string;
 };
 
-export async function Logo({ href = "/", className }: LogoProps) {
+export async function Logo({ href, className }: LogoProps) {
   const { brand } = await getTenant();
   const initial = (brand.name || "N").charAt(0).toUpperCase();
+  const homeHref = href ?? (await siteHref("/"));
 
   return (
     <Link
-      href={href}
+      href={homeHref}
       className={`site-logo inline-flex shrink-0 items-center gap-2.5 ${className || ""}`.trim()}
     >
       {brand.logo ? (
