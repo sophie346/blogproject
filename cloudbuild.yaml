@@ -43,7 +43,8 @@ steps:
           --location="${_GKE_LOCATION}" \
           --project="${PROJECT_ID}"
         kubectl rollout restart deployment "${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}"
-        kubectl rollout status "deployment/${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}" --timeout=300s
+        # NEG / LB readiness can take several minutes after the container is Ready.
+        kubectl rollout status "deployment/${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}" --timeout=600s
 
 options:
   logging: CLOUD_LOGGING_ONLY
