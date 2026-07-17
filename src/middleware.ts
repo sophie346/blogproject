@@ -41,6 +41,9 @@ export function middleware(request: NextRequest) {
   if (site.siteUrl) {
     requestHeaders.set("x-blog-site-url", site.siteUrl.replace(/\/$/, ""));
   }
+  if (site.themeId) {
+    requestHeaders.set("x-blog-theme-id", site.themeId);
+  }
   if (site.authToken) {
     requestHeaders.set("x-blog-auth-token", site.authToken);
   }

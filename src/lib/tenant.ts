@@ -14,13 +14,17 @@ async function readBlogHeaders() {
     label: h.get("x-blog-label") || "",
     pathPrefix: h.get("x-blog-path-prefix") || "",
     siteUrl: h.get("x-blog-site-url") || "",
+    themeId: h.get("x-blog-theme-id") || "",
     authToken: h.get("x-blog-auth-token") || "",
     host: (h.get("x-forwarded-host") || h.get("host") || "").split(",")[0].trim(),
   };
 }
 
 async function buildTenant(
-  mapping: Pick<SiteBinding, "clientName" | "label" | "siteUrl" | "pathPrefix"> & {
+  mapping: Pick<
+    SiteBinding,
+    "clientName" | "label" | "siteUrl" | "pathPrefix" | "themeId"
+  > & {
     pathPrefix: string;
   },
   host: string,
@@ -33,7 +37,7 @@ async function buildTenant(
   );
   const { theme: settingsTheme, ...rest } = settings;
   const theme = loadTheme(
-    settingsTheme?.id || "default",
+    mapping.themeId || settingsTheme?.id || "default",
     settingsTheme?.tokens,
     settingsTheme?.customCss
   );
@@ -65,6 +69,7 @@ export const getTenantOrNull = cache(async (): Promise<TenantConfig | null> => {
       label: meta.label,
       siteUrl: meta.siteUrl || undefined,
       pathPrefix: meta.pathPrefix,
+      themeId: (meta.themeId as SiteBinding["themeId"]) || undefined,
     },
     meta.host,
     meta.authToken

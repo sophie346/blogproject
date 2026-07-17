@@ -24,6 +24,11 @@ export type SiteBinding = {
   /** Public origin including pathPrefix for SEO (no trailing slash) */
   siteUrl?: string;
   authToken?: string;
+  /**
+   * Optional theme override for this mount (wins over ChannelAdmin settings).
+   * Useful for temp path tests (e.g. /blogstemp).
+   */
+  themeId?: "default" | "modern" | "luxury";
 };
 
 /** Shared storefront BFF base. */
@@ -59,6 +64,17 @@ export const SITES: SiteBinding[] = [
     label: "oneauto",
     siteUrl: "https://onetruckparts.com/blog",
   },
+  // Temp test mount — LB /blogstemp → commonblog; WordPress stays on /blog.
+  {
+    id: "nexustruckupgrades-blogstemp",
+    hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],
+    pathPrefix: "/blogstemp",
+    clientName: "1p0248qcm3j1k401",
+    label: "nexus",
+    siteUrl: "https://nexustruckupgrades.com/blogstemp",
+    themeId: "modern",
+  },
+  // Future cutover target (LB still sends /blog → WordPress VM).
   {
     id: "nexustruckupgrades-blog",
     hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],
@@ -66,6 +82,7 @@ export const SITES: SiteBinding[] = [
     clientName: "1p0248qcm3j1k401",
     label: "nexus",
     siteUrl: "https://nexustruckupgrades.com/blog",
+    themeId: "modern",
   },
   {
     id: "onedirectbuy-blog",
