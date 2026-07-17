@@ -5,13 +5,13 @@ import { absoluteUrl, toIsoDate } from "@/lib/seo";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     {
-      url: absoluteUrl("/"),
+      url: await absoluteUrl("/"),
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: absoluteUrl("/feed.xml"),
+      url: await absoluteUrl("/feed.xml"),
       lastModified: new Date(),
       changeFrequency: "hourly",
       priority: 0.3,
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const post of result.data) {
       if (!post.slug) continue;
       entries.push({
-        url: absoluteUrl(`/blog/${post.slug}`),
+        url: await absoluteUrl(`/blog/${post.slug}`),
         lastModified: toIsoDate(post.updatedDate || post.publishedDate)
           ? new Date(post.updatedDate || post.publishedDate || "")
           : new Date(),

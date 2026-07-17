@@ -5,21 +5,20 @@ import type { Author } from "@/types/category";
 import { getBlogs } from "./blogs";
 
 /** Known authors from tenant config. The first is the default post author. */
-export function getAuthors(): Author[] {
-  return getTenant().authors;
+export async function getAuthors(): Promise<Author[]> {
+  return (await getTenant()).authors;
 }
 
-export function getDefaultAuthor(): Author {
-  const authors = getAuthors();
-  const tenant = getTenant();
+export async function getDefaultAuthor(): Promise<Author> {
+  const authors = await getAuthors();
+  const tenant = await getTenant();
   return authors[0] || { slug: slugify(tenant.brand.author), name: tenant.brand.author };
 }
 
-export function getAuthorBySlug(slug: string): Author | null {
+export async function getAuthorBySlug(slug: string): Promise<Author | null> {
   const normalized = slugify(slug);
-  return (
-    getAuthors().find((author) => slugify(author.slug) === normalized) || null
-  );
+  const authors = await getAuthors();
+  return authors.find((author) => slugify(author.slug) === normalized) || null;
 }
 
 /**
@@ -28,7 +27,7 @@ export function getAuthorBySlug(slug: string): Author | null {
  */
 export async function getBlogsByAuthor(slug: string): Promise<BlogListItem[]> {
   const normalized = slugify(slug);
-  const defaultAuthor = getDefaultAuthor();
+  const defaultAuthor = await getDefaultAuthor();
   if (slugify(defaultAuthor.slug) !== normalized) return [];
 
   const result = await getBlogs(1, 50);

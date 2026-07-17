@@ -1,9 +1,5 @@
 /**
- * Active client selector.
- *
- * One deployment serves one client. Switch clients by changing CLIENT_NAME
- * below (must match a file in `src/clients/<name>.ts`), then restart.
+ * UI theme-key fallback when a host mapping is missing.
+ * Tenant identity comes from `./tenants` (Host → TENANTS).
  */
-export const CLIENT_NAME = "oneauto";
-
 export const DEFAULT_CLIENT = "oneauto";

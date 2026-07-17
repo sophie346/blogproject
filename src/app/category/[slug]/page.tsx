@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArchiveSection } from "@/components/sections/ArchiveSection";
-import { siteConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
 import { absoluteUrl } from "@/lib/seo";
 import { getBlogsByCategory, getCategoryBySlug } from "@/services/categories";
 
@@ -14,6 +14,7 @@ export async function generateMetadata({
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
+  const siteConfig = await getSiteConfig();
 
   if (!category) {
     return { title: "Category not found", robots: { index: false, follow: false } };
@@ -25,7 +26,7 @@ export async function generateMetadata({
     description:
       category.description ||
       `Stories filed under ${category.name} on ${siteConfig.name}.`,
-    alternates: { canonical: absoluteUrl(`/category/${category.slug}`) },
+    alternates: { canonical: await absoluteUrl(`/category/${category.slug}`) },
   };
 }
 

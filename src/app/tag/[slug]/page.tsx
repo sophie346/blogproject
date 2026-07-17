@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArchiveSection } from "@/components/sections/ArchiveSection";
-import { siteConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
 import { absoluteUrl } from "@/lib/seo";
 import { getBlogsByTag, getTagBySlug } from "@/services/tags";
 
@@ -14,6 +14,7 @@ export async function generateMetadata({
 }: TagPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tag = await getTagBySlug(slug);
+  const siteConfig = await getSiteConfig();
 
   if (!tag) {
     return { title: "Tag not found", robots: { index: false, follow: false } };
@@ -23,7 +24,7 @@ export async function generateMetadata({
   return {
     title: { absolute: title },
     description: `Stories tagged ${tag.name} on ${siteConfig.name}.`,
-    alternates: { canonical: absoluteUrl(`/tag/${tag.slug}`) },
+    alternates: { canonical: await absoluteUrl(`/tag/${tag.slug}`) },
   };
 }
 

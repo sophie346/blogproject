@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArchiveSection } from "@/components/sections/ArchiveSection";
-import { siteConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
 import { absoluteUrl } from "@/lib/seo";
 import { getAuthorBySlug, getBlogsByAuthor } from "@/services/authors";
 
@@ -13,7 +13,8 @@ export async function generateMetadata({
   params,
 }: AuthorPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const author = getAuthorBySlug(slug);
+  const author = await getAuthorBySlug(slug);
+  const siteConfig = await getSiteConfig();
 
   if (!author) {
     return { title: "Author not found", robots: { index: false, follow: false } };
@@ -23,13 +24,13 @@ export async function generateMetadata({
   return {
     title: { absolute: title },
     description: author.bio || `Stories by ${author.name} on ${siteConfig.name}.`,
-    alternates: { canonical: absoluteUrl(`/author/${author.slug}`) },
+    alternates: { canonical: await absoluteUrl(`/author/${author.slug}`) },
   };
 }
 
 export default async function AuthorPage({ params }: AuthorPageProps) {
   const { slug } = await params;
-  const author = getAuthorBySlug(slug);
+  const author = await getAuthorBySlug(slug);
 
   if (!author) {
     notFound();

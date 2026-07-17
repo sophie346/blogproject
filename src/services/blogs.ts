@@ -8,8 +8,8 @@ import type {
   BlogSeoSummary,
 } from "@/types/blog";
 
-function buildBffHeaders(): Record<string, string> {
-  const { clientName, label, authToken } = getApiConfig();
+async function buildBffHeaders(): Promise<Record<string, string>> {
+  const { clientName, label, authToken } = await getApiConfig();
   const headers: Record<string, string> = {
     Accept: "application/json",
     clientname: clientName,
@@ -37,14 +37,14 @@ async function bffGet<T>(
   path: string,
   params?: Record<string, string | number>
 ): Promise<AxiosBlogResult<T>> {
-  const { label } = getApiConfig();
+  const { label } = await getApiConfig();
   try {
     const res = await apiGet<T>(path, {
       params: {
         ...(label ? { label } : {}),
         ...(params || {}),
       },
-      headers: buildBffHeaders(),
+      headers: await buildBffHeaders(),
     });
     return {
       ok: true,
@@ -55,7 +55,7 @@ async function bffGet<T>(
     return {
       ok: false,
       reason: "api_error",
-      message: getAxiosErrorMessage(err, "Unable to reach the blog service."),
+      message: await getAxiosErrorMessage(err, "Unable to reach the blog service."),
     };
   }
 }
@@ -231,8 +231,8 @@ type BlogConfigError = {
   message: string;
 };
 
-function missingConfig(): BlogConfigError | null {
-  const { label, clientName, apiBase } = getApiConfig();
+async function missingConfig(): Promise<BlogConfigError | null> {
+  const { label, clientName, apiBase } = await getApiConfig();
   if (!apiBase) {
     return {
       ok: false,
@@ -259,7 +259,7 @@ function missingConfig(): BlogConfigError | null {
 
 /** Published blog list for the active tenant. */
 export async function getBlogs(page = 1, limit = 12): Promise<BlogListResult> {
-  const configError = missingConfig();
+  const configError = await missingConfig();
   if (configError) return configError;
 
   const result = await bffGet<BlogListResponse>("/prod/blogs", {
@@ -323,7 +323,7 @@ export async function getBlogs(page = 1, limit = 12): Promise<BlogListResult> {
 
 /** Published blog detail by slug for the active tenant. */
 export async function getBlogBySlug(slug: string): Promise<BlogDetailResult> {
-  const configError = missingConfig();
+  const configError = await missingConfig();
   if (configError) {
     return {
       ok: false,

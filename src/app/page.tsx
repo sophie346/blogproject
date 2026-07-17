@@ -29,18 +29,18 @@ export async function generateMetadata({
   const totalcount = result.ok ? result.totalcount : 0;
   const totalPages = Math.max(1, Math.ceil(totalcount / LIMIT));
 
-  return buildHomeMetadata({ page, totalPages });
+  return await buildHomeMetadata({ page, totalPages });
 }
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
   const page = Math.max(parseInt(params.page || "1", 10) || 1, 1);
-  const tenant = getTenant();
+  const tenant = await getTenant();
 
   const result = await getBlogs(page, LIMIT);
   const totalcount = result.ok ? result.totalcount : 0;
   const totalPages = Math.max(1, Math.ceil(totalcount / LIMIT));
-  const rel = getPaginationRelLinks(page, totalPages);
+  const rel = await getPaginationRelLinks(page, totalPages);
   const posts = result.ok ? result.data : [];
 
   const categories = tenant.sections.categories ? await getCategories() : [];
@@ -62,7 +62,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <>
-      <JsonLd data={buildHomeJsonLd({ page, posts })} />
+      <JsonLd data={await buildHomeJsonLd({ page, posts })} />
       {rel.prev ? <link rel="prev" href={rel.prev} /> : null}
       {rel.next ? <link rel="next" href={rel.next} /> : null}
 

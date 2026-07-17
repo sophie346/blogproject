@@ -16,7 +16,7 @@ function postCategoryName(post: BlogListItem): string | null {
  * derived from the first keyword of each published post (with counts).
  */
 export async function getCategories(): Promise<Category[]> {
-  const tenant = getTenant();
+  const tenant = await getTenant();
   const result = await getBlogs(1, 50);
   const posts = result.ok ? result.data : [];
 

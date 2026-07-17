@@ -7,8 +7,8 @@ type LogoProps = {
   className?: string;
 };
 
-export function Logo({ href = "/", className }: LogoProps) {
-  const { brand } = getTenant();
+export async function Logo({ href = "/", className }: LogoProps) {
+  const { brand } = await getTenant();
   const initial = (brand.name || "N").charAt(0).toUpperCase();
 
   return (

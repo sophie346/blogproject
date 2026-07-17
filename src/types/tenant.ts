@@ -59,6 +59,8 @@ export type TenantConfig = {
   clientName: string;
   /** Website label — query param + `label` header for blog scoping. */
   label: string;
+  /** Public origin for SEO (from host mapping). */
+  siteUrl: string;
   brand: TenantBrand;
   theme: ThemeConfig;
   copy: TenantCopy;
@@ -78,12 +80,12 @@ export type TenantConfig = {
   };
 };
 
-/** A client definition file exports this. Runtime identity (clientName,
- * label) is merged from env by the tenant loader. Theme CSS tokens are
- * loaded from `src/data/themes/<client>.json` (later: API) via loadTheme. */
+/** A client definition file exports brand/copy/UI. Runtime identity
+ * (clientName, label, siteUrl) comes from `constants/tenants` Host mapping.
+ * Theme CSS tokens load from `src/data/themes/<themeKey>.json`. */
 export type ClientDefinition = Omit<
   TenantConfig,
-  "clientName" | "label" | "theme"
+  "clientName" | "label" | "theme" | "siteUrl"
 > & {
   clientName?: string;
   label?: string;

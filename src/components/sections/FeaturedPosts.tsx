@@ -12,7 +12,7 @@ type FeaturedPostsProps = {
 };
 
 /** Compact featured highlight — standard editorial row, not a full-bleed photo hero. */
-export function FeaturedPosts({
+export async function FeaturedPosts({
   posts,
   heading = "Featured",
   eyebrow = "Editor’s pick",
@@ -20,7 +20,7 @@ export function FeaturedPosts({
   const post = posts[0];
   if (!post) return null;
 
-  const seo = resolveBlogSeo(post);
+  const seo = await resolveBlogSeo(post);
   const imageUrl = resolvePostImage(post) || seo.image;
   const date = formatBlogDate(post.publishedDate || post.updatedDate);
 

@@ -16,9 +16,9 @@ function resolveCategory(post: BlogListItem): string {
   return "Stories";
 }
 
-export function BlogCard({ post, index = 0 }: BlogCardProps) {
+export async function BlogCard({ post, index = 0 }: BlogCardProps) {
   const date = formatBlogDate(post.publishedDate || post.updatedDate);
-  const seo = resolveBlogSeo(post);
+  const seo = await resolveBlogSeo(post);
   const imageUrl = resolvePostImage(post) || seo.image;
   const category = resolveCategory(post);
   const href = `/blog/${post.slug}`;
@@ -40,7 +40,7 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
         className="blog-card flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-ink-soft transition hover:-translate-y-0.5 hover:border-amber/40"
         itemProp="url"
       >
-        <meta itemProp="mainEntityOfPage" content={absoluteUrl(href)} />
+        <meta itemProp="mainEntityOfPage" content={await absoluteUrl(href)} />
 
         <div className="blog-card__media relative aspect-video overflow-hidden">
           {imageUrl ? (

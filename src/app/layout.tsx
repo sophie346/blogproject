@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Source_Serif_4, Syne } from "next/font/google";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { siteConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
 import { getTenant } from "@/lib/tenant";
 import { themeTokensToStyle } from "@/lib/theme";
 import { absoluteUrl, getDefaultOgImage, getSiteUrl } from "@/lib/seo";
@@ -20,74 +20,79 @@ const sourceSerif = Source_Serif_4({
   weight: ["400", "500", "600", "700"],
 });
 
-const ogImage = getDefaultOgImage();
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+  const ogImage = await getDefaultOgImage();
+  const siteUrl = await getSiteUrl();
 
-export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: {
-    default: `${siteConfig.name} Blog`,
-    template: `%s · ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  applicationName: siteConfig.name,
-  authors: [{ name: siteConfig.author, url: absoluteUrl("/") }],
-  creator: siteConfig.author,
-  publisher: siteConfig.name,
-  referrer: "origin-when-cross-origin",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: `${siteConfig.name} Blog`,
+      template: `%s · ${siteConfig.name}`,
+    },
+    description: siteConfig.description,
+    applicationName: siteConfig.name,
+    authors: [{ name: siteConfig.author, url: await absoluteUrl("/") }],
+    creator: siteConfig.author,
+    publisher: siteConfig.name,
+    referrer: "origin-when-cross-origin",
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
-  },
-  alternates: {
-    canonical: absoluteUrl("/"),
-    types: {
-      "application/rss+xml": absoluteUrl("/feed.xml"),
+    alternates: {
+      canonical: await absoluteUrl("/"),
+      types: {
+        "application/rss+xml": await absoluteUrl("/feed.xml"),
+      },
     },
-  },
-  openGraph: {
-    type: "website",
-    locale: siteConfig.locale,
-    url: absoluteUrl("/"),
-    siteName: siteConfig.name,
-    title: `${siteConfig.name} Blog`,
-    description: siteConfig.description,
-    images: ogImage
-      ? [
-          {
-            url: ogImage,
-            width: 1200,
-            height: 630,
-            alt: siteConfig.name,
-          },
-        ]
-      : undefined,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.name} Blog`,
-    description: siteConfig.description,
-    images: ogImage ? [ogImage] : undefined,
-  },
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-};
+    openGraph: {
+      type: "website",
+      locale: siteConfig.locale,
+      url: await absoluteUrl("/"),
+      siteName: siteConfig.name,
+      title: `${siteConfig.name} Blog`,
+      description: siteConfig.description,
+      images: ogImage
+        ? [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: siteConfig.name,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${siteConfig.name} Blog`,
+      description: siteConfig.description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const tenant = getTenant();
+  const tenant = await getTenant();
+  const siteConfig = await getSiteConfig();
   const themeStyle = themeTokensToStyle(tenant.theme.tokens);
 
   return (

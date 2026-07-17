@@ -1,50 +1,45 @@
 import type { Metadata } from "next";
 import { estimateReadingTime } from "@/services/blogs";
-import { siteConfig } from "./config";
+import { getSiteConfig } from "./config";
 import { getValidImageUrl, resolvePostImage } from "./images";
 import { getTenant } from "./tenant";
 import type { BlogDetail, BlogListItem } from "@/types/blog";
 
-export function getSiteUrl() {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    "http://localhost:3000"
-  ).replace(/\/$/, "");
+export async function getSiteUrl() {
+  const { siteUrl } = await getSiteConfig();
+  return siteUrl.replace(/\/$/, "");
 }
 
-export function absoluteUrl(path = "/") {
-  const base = getSiteUrl();
+export async function absoluteUrl(path = "/") {
+  const base = await getSiteUrl();
   if (!path || path === "/") return `${base}/`;
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-export function getSocialSameAs() {
+export async function getSocialSameAs() {
+  const { social } = await getTenant();
   return [
-    process.env.NEXT_PUBLIC_FACEBOOK_URL,
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL,
-    process.env.NEXT_PUBLIC_TWITTER_URL,
-    process.env.NEXT_PUBLIC_TIKTOK_URL,
-    process.env.NEXT_PUBLIC_LINKEDIN_URL,
+    social.facebook,
+    social.instagram,
+    social.twitter,
+    social.tiktok,
+    social.linkedin,
   ]
     .map((value) => (value || "").trim())
     .filter(Boolean);
 }
 
-export function getDefaultOgImage() {
-  return (
-    getValidImageUrl(process.env.NEXT_PUBLIC_OG_IMAGE) ||
-    getValidImageUrl(getTenant().seo.ogImage) ||
-    null
-  );
+export async function getDefaultOgImage() {
+  const tenant = await getTenant();
+  return getValidImageUrl(tenant.seo.ogImage) || null;
 }
 
-export function getSiteLogoUrl() {
+export async function getSiteLogoUrl() {
+  const tenant = await getTenant();
   return (
-    getValidImageUrl(process.env.NEXT_PUBLIC_SITE_LOGO) ||
-    getValidImageUrl(getTenant().seo.siteLogo) ||
-    getValidImageUrl(getTenant().brand.logo) ||
-    getDefaultOgImage()
+    getValidImageUrl(tenant.seo.siteLogo) ||
+    getValidImageUrl(tenant.brand.logo) ||
+    (await getDefaultOgImage())
   );
 }
 
@@ -85,7 +80,7 @@ function imageMimeType(url: string) {
   return "image/jpeg";
 }
 
-export function resolveBlogImage(post: {
+export async function resolveBlogImage(post: {
   featuredImage?: string;
   seo?: Record<string, unknown> | null;
 }) {
@@ -97,11 +92,12 @@ export function resolveBlogImage(post: {
     resolvePostImage({
       featuredImage: post.featuredImage,
       seo: { openGraphImageUrl: og },
-    }) || getDefaultOgImage()
+    }) || (await getDefaultOgImage())
   );
 }
 
-export function resolveBlogSeo(post: BlogDetail | BlogListItem) {
+export async function resolveBlogSeo(post: BlogDetail | BlogListItem) {
+  const siteConfig = await getSiteConfig();
   const seo = (post.seo || {}) as Record<string, unknown>;
   const title =
     String(seo.metaTitle || seo.title || seo.openGraphTitle || post.title || "")
@@ -126,7 +122,7 @@ export function resolveBlogSeo(post: BlogDetail | BlogListItem) {
         description
     ).trim() || description;
   const keywords = parseKeywords(seo.metaKeywords);
-  const image = resolveBlogImage(post);
+  const image = await resolveBlogImage(post);
   const published = toIsoDate(post.publishedDate);
   const modified = toIsoDate(post.updatedDate) || published;
 
@@ -163,20 +159,21 @@ const noindexRobots: NonNullable<Metadata["robots"]> = {
   },
 };
 
-export function buildHomeMetadata(options: {
+export async function buildHomeMetadata(options: {
   page: number;
   totalPages: number;
-}): Metadata {
+}): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
   const { page } = options;
   const isPaginated = page > 1;
   const canonicalPath = isPaginated ? `/?page=${page}` : "/";
-  const canonical = absoluteUrl(canonicalPath);
+  const canonical = await absoluteUrl(canonicalPath);
   const title = isPaginated
     ? `${siteConfig.name} Blog — Page ${page}`
     : `${siteConfig.name} Blog`;
   const description = siteConfig.description;
-  const ogImage = getDefaultOgImage();
-  const keywords = getTenant().seo.keywords;
+  const ogImage = await getDefaultOgImage();
+  const keywords = (await getTenant()).seo.keywords;
 
   return {
     title: {
@@ -191,7 +188,7 @@ export function buildHomeMetadata(options: {
     alternates: {
       canonical,
       types: {
-        "application/rss+xml": absoluteUrl("/feed.xml"),
+        "application/rss+xml": await absoluteUrl("/feed.xml"),
       },
     },
     openGraph: {
@@ -222,24 +219,26 @@ export function buildHomeMetadata(options: {
   };
 }
 
-export function getPaginationHref(page: number) {
+export async function getPaginationHref(page: number) {
   if (page <= 1) return absoluteUrl("/");
   return absoluteUrl(`/?page=${page}`);
 }
 
-export function getPaginationRelLinks(page: number, totalPages: number) {
+export async function getPaginationRelLinks(page: number, totalPages: number) {
   return {
-    prev: page > 1 ? getPaginationHref(page - 1) : null,
-    next: page < totalPages ? getPaginationHref(page + 1) : null,
+    prev: page > 1 ? await getPaginationHref(page - 1) : null,
+    next: page < totalPages ? await getPaginationHref(page + 1) : null,
   };
 }
 
-export function buildArticleMetadata(post: BlogDetail): Metadata {
-  const seo = resolveBlogSeo(post);
-  const url = absoluteUrl(`/blog/${post.slug}`);
+export async function buildArticleMetadata(post: BlogDetail): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+  const tenant = await getTenant();
+  const seo = await resolveBlogSeo(post);
+  const url = await absoluteUrl(`/blog/${post.slug}`);
   const isPublic = String(post.status || "published").toLowerCase() === "published";
   const readingMinutes = estimateReadingTime(post.content || post.excerpt);
-  const facebook = (process.env.NEXT_PUBLIC_FACEBOOK_URL || "").trim();
+  const facebook = (tenant.social.facebook || "").trim();
 
   return {
     title: {
@@ -247,7 +246,7 @@ export function buildArticleMetadata(post: BlogDetail): Metadata {
     },
     description: seo.description,
     keywords: seo.keywords.length ? seo.keywords : undefined,
-    authors: [{ name: siteConfig.author, url: absoluteUrl("/") }],
+    authors: [{ name: siteConfig.author, url: await absoluteUrl("/") }],
     creator: siteConfig.author,
     publisher: siteConfig.name,
     category: "Blog",
@@ -255,7 +254,7 @@ export function buildArticleMetadata(post: BlogDetail): Metadata {
     alternates: {
       canonical: url,
       types: {
-        "application/rss+xml": absoluteUrl("/feed.xml"),
+        "application/rss+xml": await absoluteUrl("/feed.xml"),
       },
     },
     openGraph: {
@@ -300,10 +299,11 @@ export function buildArticleMetadata(post: BlogDetail): Metadata {
   };
 }
 
-function organizationNode() {
-  const siteUrl = absoluteUrl("/");
-  const logo = getSiteLogoUrl();
-  const sameAs = getSocialSameAs();
+async function organizationNode() {
+  const siteConfig = await getSiteConfig();
+  const siteUrl = await absoluteUrl("/");
+  const logo = await getSiteLogoUrl();
+  const sameAs = await getSocialSameAs();
 
   return {
     "@type": "Organization",
@@ -328,8 +328,9 @@ function organizationNode() {
   };
 }
 
-function websiteNode() {
-  const siteUrl = absoluteUrl("/");
+async function websiteNode() {
+  const siteConfig = await getSiteConfig();
+  const siteUrl = await absoluteUrl("/");
   return {
     "@type": "WebSite",
     "@id": `${siteUrl}#website`,
@@ -351,8 +352,9 @@ function websiteNode() {
   };
 }
 
-function personNode() {
-  const siteUrl = absoluteUrl("/");
+async function personNode() {
+  const siteConfig = await getSiteConfig();
+  const siteUrl = await absoluteUrl("/");
   return {
     "@type": "Person",
     "@id": `${siteUrl}#/schema/person/author`,
@@ -361,13 +363,14 @@ function personNode() {
   };
 }
 
-export function buildHomeJsonLd(options: {
+export async function buildHomeJsonLd(options: {
   page: number;
   posts: BlogListItem[];
 }) {
+  const siteConfig = await getSiteConfig();
   const { page, posts } = options;
-  const siteUrl = absoluteUrl("/");
-  const canonical = absoluteUrl(page > 1 ? `/?page=${page}` : "/");
+  const siteUrl = await absoluteUrl("/");
+  const canonical = await absoluteUrl(page > 1 ? `/?page=${page}` : "/");
   const title =
     page > 1
       ? `${siteConfig.name} Blog — Page ${page}`
@@ -397,20 +400,22 @@ export function buildHomeJsonLd(options: {
         },
       ],
     },
-    websiteNode(),
-    organizationNode(),
+    await websiteNode(),
+    await organizationNode(),
   ];
 
   if (posts.length) {
     graph.push({
       "@type": "ItemList",
       "@id": `${canonical}#itemlist`,
-      itemListElement: posts.map((post, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        url: absoluteUrl(`/blog/${post.slug}`),
-        name: post.title,
-      })),
+      itemListElement: await Promise.all(
+        posts.map(async (post, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          url: await absoluteUrl(`/blog/${post.slug}`),
+          name: post.title,
+        }))
+      ),
     });
   }
 
@@ -420,10 +425,11 @@ export function buildHomeJsonLd(options: {
   };
 }
 
-export function buildArticleJsonLd(post: BlogDetail) {
-  const seo = resolveBlogSeo(post);
-  const siteUrl = absoluteUrl("/");
-  const url = absoluteUrl(`/blog/${post.slug}`);
+export async function buildArticleJsonLd(post: BlogDetail) {
+  const siteConfig = await getSiteConfig();
+  const seo = await resolveBlogSeo(post);
+  const siteUrl = await absoluteUrl("/");
+  const url = await absoluteUrl(`/blog/${post.slug}`);
   const wordCount = estimateWordCount(post.content || post.excerpt);
 
   const graph: Record<string, unknown>[] = [
@@ -493,9 +499,9 @@ export function buildArticleJsonLd(post: BlogDetail) {
         },
       ],
     },
-    websiteNode(),
-    organizationNode(),
-    personNode(),
+    await websiteNode(),
+    await organizationNode(),
+    await personNode(),
   ];
 
   if (seo.image) {

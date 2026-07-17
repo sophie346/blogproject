@@ -10,12 +10,12 @@ export const http = axios.create({
   validateStatus: () => true, // handle status codes in callers
 });
 
-export function getApiBase() {
-  return getApiConfig().apiBase;
+export async function getApiBase() {
+  return (await getApiConfig()).apiBase;
 }
 
-export function apiUrl(path: string) {
-  const base = getApiBase().replace(/\/$/, "");
+export async function apiUrl(path: string) {
+  const base = (await getApiBase()).replace(/\/$/, "");
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return `${base}${cleanPath}`;
 }
@@ -31,7 +31,7 @@ export async function apiGet<T = unknown>(
     params: options?.params,
     headers: options?.headers,
   };
-  return http.get<T>(apiUrl(path), config);
+  return http.get<T>(await apiUrl(path), config);
 }
 
 export async function apiPost<T = unknown>(
@@ -41,12 +41,12 @@ export async function apiPost<T = unknown>(
     headers?: Record<string, string>;
   }
 ) {
-  return http.post<T>(apiUrl(path), data ?? {}, {
+  return http.post<T>(await apiUrl(path), data ?? {}, {
     headers: options?.headers,
   });
 }
 
-export function getAxiosErrorMessage(err: unknown, fallback: string) {
+export async function getAxiosErrorMessage(err: unknown, fallback: string) {
   if (axios.isAxiosError(err)) {
     const ax = err as AxiosError<{ message?: string }>;
     const code = ax.code || "";
@@ -56,8 +56,8 @@ export function getAxiosErrorMessage(err: unknown, fallback: string) {
       /ECONNREFUSED/i.test(String(raw)) ||
       /connect ECONNREFUSED/i.test(String(ax.message))
     ) {
-      const base = getApiBase() || "http://127.0.0.1:3005";
-      return `BFF not reachable at ${base}. Start OneAuto BFF with: cd oneauto && npm run dev (port 3005).`;
+      const base = (await getApiBase()) || "https://oneauto-backend.onechanneladmin.com";
+      return `BFF not reachable at ${base}.`;
     }
     return raw || fallback;
   }

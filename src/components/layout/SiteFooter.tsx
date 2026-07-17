@@ -10,8 +10,8 @@ const SOCIAL_LABELS: Record<string, string> = {
   linkedin: "LinkedIn",
 };
 
-export function SiteFooter() {
-  const { brand, copy, footerGroups, social } = getTenant();
+export async function SiteFooter() {
+  const { brand, copy, footerGroups, social } = await getTenant();
   const socialEntries = Object.entries(social).filter(([, url]) => Boolean(url));
   const year = new Date().getFullYear();
 

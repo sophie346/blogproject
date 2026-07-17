@@ -3,8 +3,7 @@ import nexus from "./nexus";
 import oneauto from "./oneauto";
 
 /**
- * Registry of known clients. Add new client definition files here.
- * Keys must be lowercase and match CLIENT_NAME values.
+ * UI registry keyed by `themeKey` from `constants/tenants` Host mapping.
  */
 export const clients: Record<string, ClientDefinition> = {
   oneauto,

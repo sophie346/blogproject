@@ -13,7 +13,7 @@ import {
   getBlogBySlug,
   getRelatedBlogs,
 } from "@/services/blogs";
-import { siteConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
 import { resolvePostImage } from "@/lib/images";
 import {
   absoluteUrl,
@@ -41,12 +41,13 @@ export async function generateMetadata({
     };
   }
 
-  return buildArticleMetadata(result.data);
+  return await buildArticleMetadata(result.data);
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const { slug } = await params;
   const result = await getBlogBySlug(slug);
+  const siteConfig = await getSiteConfig();
 
   if (!result.ok) {
     if (result.reason === "not_found") {
@@ -70,18 +71,18 @@ export default async function BlogPage({ params }: BlogPageProps) {
   }
 
   const post = result.data;
-  const seo = resolveBlogSeo(post);
+  const seo = await resolveBlogSeo(post);
   const date = formatBlogDate(post.publishedDate || post.updatedDate);
   const dateIso = toIsoDate(post.publishedDate || post.updatedDate);
   const imageUrl = resolvePostImage(post) || seo.image;
   const readingMinutes = estimateReadingTime(post.content || post.excerpt);
   const keywords = parseKeywords(post.seo?.metaKeywords);
   const related = await getRelatedBlogs(post.slug, 3);
-  const shareUrl = absoluteUrl(`/blog/${post.slug}`);
+  const shareUrl = await absoluteUrl(`/blog/${post.slug}`);
 
   return (
     <article itemScope itemType="https://schema.org/Article">
-      <JsonLd data={buildArticleJsonLd(post)} />
+      <JsonLd data={await buildArticleJsonLd(post)} />
       <meta itemProp="headline" content={post.title} />
       {seo.description ? (
         <meta itemProp="description" content={seo.description} />

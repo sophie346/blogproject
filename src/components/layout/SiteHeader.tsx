@@ -2,8 +2,8 @@ import Link from "next/link";
 import { getTenant } from "@/lib/tenant";
 import { Logo } from "./Logo";
 
-export function SiteHeader() {
-  const { nav, brand } = getTenant();
+export async function SiteHeader() {
+  const { nav, brand } = await getTenant();
 
   const uniqueNav = nav.filter(
     (item, index, list) =>

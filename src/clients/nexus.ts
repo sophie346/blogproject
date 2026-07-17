@@ -5,7 +5,9 @@ import type { ClientDefinition } from "@/types/tenant";
  * CSS tokens live in src/data/themes/nexus.json (via loadTheme).
  */
 const nexus: ClientDefinition = {
-  clientName: "nexus",
+  // API identity comes from constants/tenants.ts (Host → clientName/label).
+  // clientName for Nexus org: 1p0248qcm3j1k401
+  clientName: "1p0248qcm3j1k401",
   label: "nexus",
   brand: {
     name: "Nexus",

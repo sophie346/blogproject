@@ -16,8 +16,8 @@ type HeroSectionProps = {
 };
 
 /** Selects the hero variant for the active tenant theme. */
-export function Hero({ stat }: HeroSectionProps) {
-  const { brand, copy, theme } = getTenant();
+export async function Hero({ stat }: HeroSectionProps) {
+  const { brand, copy, theme } = await getTenant();
   const HeroVariant = HERO_REGISTRY[theme.id] || DefaultHero;
 
   return (

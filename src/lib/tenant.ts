@@ -1,62 +1,56 @@
+import { cache } from "react";
+import { headers } from "next/headers";
 import { clients } from "@/clients";
-import { CLIENT_NAME, DEFAULT_CLIENT } from "@/constants/client";
+import {
+  BLOG_API_BASE,
+  DEFAULT_HOST,
+  resolveTenantMapping,
+} from "@/constants/tenants";
+import { DEFAULT_CLIENT } from "@/constants/client";
 import { loadTheme } from "@/lib/load-theme";
 import type { ClientDefinition, TenantConfig } from "@/types/tenant";
 
-/** Normalize env values that may include quotes / trailing semicolons. */
-function env(name: string, fallback = "") {
-  const raw = process.env[name];
-  if (raw == null) return fallback;
-  return String(raw)
-    .trim()
-    .replace(/^['"]|['"]$/g, "")
-    .replace(/;+\s*$/g, "")
-    .trim();
+async function readRequestHost(): Promise<string> {
+  const h = await headers();
+  const raw = h.get("x-forwarded-host") || h.get("host") || DEFAULT_HOST;
+  return raw.split(",")[0].trim();
 }
 
-function resolveDefinition(): ClientDefinition {
-  return clients[CLIENT_NAME] || clients[DEFAULT_CLIENT];
+function resolveDefinition(themeKey: string): ClientDefinition {
+  return clients[themeKey] || clients[DEFAULT_CLIENT];
 }
 
-let cached: TenantConfig | null = null;
+/** Active tenant for this request (Host → constants/tenants). Cached per request. */
+export const getTenant = cache(async (): Promise<TenantConfig> => {
+  const host = await readRequestHost();
+  const mapping = resolveTenantMapping(host);
+  const themeKey = mapping.themeKey || DEFAULT_CLIENT;
+  const def = resolveDefinition(themeKey);
+  const theme = loadTheme(themeKey);
+  const { theme: _ignored, ...rest } = def;
 
-/** Resolve the active tenant: client definition + theme JSON + env identity. */
-export function getTenant(): TenantConfig {
-  if (cached) return cached;
-
-  const def = resolveDefinition();
-
-  const clientName =
-    env("ONEAUTO_CLIENTNAME") || def.clientName || CLIENT_NAME || DEFAULT_CLIENT;
-  const label = env("WEBSITE_LABEL") || def.label || clientName;
-
-  // Theme CSS values: keyed by UI CLIENT_NAME (JSON today → API later).
-  const theme = loadTheme(CLIENT_NAME || def.clientName || DEFAULT_CLIENT);
-
-  const { theme: _ignoredTheme, ...rest } = def;
-
-  cached = {
-    ...rest,
-    clientName,
-    label,
-    theme,
-  } as TenantConfig;
-
-  return cached;
-}
-
-/** BFF connection config, kept separate so it can stay server-only. */
-export function getApiConfig() {
-  const apiBase = (
-    env("ONEAUTO_API_BASE", "http://127.0.0.1:3005") || ""
+  const siteUrl = (
+    mapping.siteUrl || `https://${host.replace(/:\d+$/, "")}`
   ).replace(/\/$/, "");
-  const authToken = env("ONEAUTO_AUTH_TOKEN");
-  const tenant = getTenant();
 
   return {
-    apiBase,
+    ...rest,
+    clientName: mapping.clientName,
+    label: mapping.label,
+    siteUrl,
+    theme,
+  };
+});
+
+/** BFF connection + identity headers for this request. */
+export const getApiConfig = cache(async () => {
+  const tenant = await getTenant();
+  const mapping = resolveTenantMapping(await readRequestHost());
+
+  return {
+    apiBase: BLOG_API_BASE.replace(/\/$/, ""),
     clientName: tenant.clientName,
     label: tenant.label,
-    authToken,
+    authToken: mapping.authToken || "",
   };
-}
+});

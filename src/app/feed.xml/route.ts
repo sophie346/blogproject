@@ -1,5 +1,5 @@
 import { getBlogs } from "@/services/blogs";
-import { siteConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
 import { absoluteUrl, resolveBlogSeo, toIsoDate } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -16,17 +16,19 @@ function escapeXml(value: string) {
 export async function GET() {
   const result = await getBlogs(1, 50);
   const posts = result.ok ? result.data : [];
-  const siteUrl = absoluteUrl("/");
-  const feedUrl = absoluteUrl("/feed.xml");
+  const siteConfig = await getSiteConfig();
+  const siteUrl = await absoluteUrl("/");
+  const feedUrl = await absoluteUrl("/feed.xml");
 
-  const items = posts
-    .map((post) => {
-      const seo = resolveBlogSeo(post);
-      const link = absoluteUrl(`/blog/${post.slug}`);
-      const pubDate = toIsoDate(post.publishedDate || post.updatedDate);
-      const image = seo.image;
+  const items = (
+    await Promise.all(
+      posts.map(async (post) => {
+        const seo = await resolveBlogSeo(post);
+        const link = await absoluteUrl(`/blog/${post.slug}`);
+        const pubDate = toIsoDate(post.publishedDate || post.updatedDate);
+        const image = seo.image;
 
-      return `
+        return `
     <item>
       <title>${escapeXml(post.title)}</title>
       <link>${escapeXml(link)}</link>
@@ -36,8 +38,9 @@ export async function GET() {
       <author>${escapeXml(siteConfig.author)}</author>
       ${image ? `<enclosure url="${escapeXml(image)}" type="image/jpeg" />` : ""}
     </item>`;
-    })
-    .join("");
+      })
+    )
+  ).join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
