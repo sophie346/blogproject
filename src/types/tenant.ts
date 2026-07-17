@@ -116,4 +116,6 @@ export type ClientDefinition = Omit<
   "theme" | "siteUrl" | "pathPrefix"
 > & {
   theme?: ThemeConfig;
+  /** Admin-configured public mount path (e.g. /blog, /blogstemp). */
+  publicPath?: string;
 };

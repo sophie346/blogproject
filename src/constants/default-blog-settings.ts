@@ -5,6 +5,7 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
   ClientDefinition,
   "clientName" | "label"
 > = {
+  publicPath: "/blog",
   brand: {
     name: "Blog",
     alternateName: "blog",

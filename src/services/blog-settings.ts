@@ -82,7 +82,16 @@ function mergeSettings(
     brand.name = DEFAULT_BLOG_SETTINGS.brand.name;
   }
 
+  let publicPath = String(
+    (src as { publicPath?: string }).publicPath ||
+      DEFAULT_BLOG_SETTINGS.publicPath ||
+      "/blog"
+  ).trim();
+  if (!publicPath.startsWith("/")) publicPath = `/${publicPath}`;
+  publicPath = publicPath.replace(/\/+$/, "") || "/blog";
+
   return {
+    publicPath,
     brand,
     copy,
     seo,
