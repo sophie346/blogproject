@@ -46,15 +46,19 @@ export function themeTokensToStyle(
     if (cssVar) style[cssVar] = value;
   }
 
-  // If googleFonts is set but stacks are omitted, derive display/sans from
-  // the first family so storefront fonts apply without extra fields.
+  // If googleFonts is set but stacks are omitted, derive stacks from the
+  // first family. Also override --font-syne: Tailwind's .font-display utility
+  // compiles to font-family: var(--font-syne), so --font-display alone is ignored.
   const families = parseGoogleFontFamilies(tokens.googleFonts);
   if (families[0]) {
     const stack = fontStackFromFamily(families[0]);
     if (!style["--font-display"]) style["--font-display"] = stack;
     if (!style["--font-sans"]) style["--font-sans"] = stack;
-    if (families[1] && !style["--font-serif"]) {
-      style["--font-serif"] = fontStackFromFamily(families[1]);
+    style["--font-syne"] = stack;
+    if (families[1]) {
+      const serif = fontStackFromFamily(families[1]);
+      if (!style["--font-serif"]) style["--font-serif"] = serif;
+      style["--font-source-serif"] = serif;
     }
   }
 

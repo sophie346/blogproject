@@ -20,11 +20,13 @@ export function parseGoogleFontFamilies(
   return out;
 }
 
-/** Build a CSS font-family stack from the first Google family name. */
+/** Build a CSS font-family stack from a Google family name. */
 export function fontStackFromFamily(family: string): string {
   const safe = family.trim();
   if (!safe) return "";
-  return `"${safe}", ui-sans-serif, system-ui, sans-serif`;
+  // Quote multi-word families; leave single tokens bare (Roboto, Inter, …).
+  const named = /\s/.test(safe) ? `"${safe}"` : safe;
+  return `${named}, ui-sans-serif, system-ui, sans-serif`;
 }
 
 /** Google Fonts CSS2 URL for the given families (weights used by the blog UI). */

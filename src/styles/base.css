@@ -11,6 +11,22 @@ body {
   font-family: var(--font-sans);
 }
 
+/*
+ * Tailwind v4 may bake .font-display to var(--font-syne). Force utilities to
+ * follow runtime theme tokens set on <html> (googleFonts / fontDisplay).
+ */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
 ::selection {
   background: color-mix(in srgb, var(--amber) 45%, transparent);
   color: var(--ink);
