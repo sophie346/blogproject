@@ -143,12 +143,28 @@
   text-underline-offset: 0.18em;
 }
 
+.blog-hero-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(42vh, 22rem);
+  object-fit: cover;
+  object-position: center;
+}
+
+.article-body figure {
+  margin: 1.75em 0;
+}
+
 .article-body img,
 .article-body video {
   display: block;
   max-width: 100%;
+  width: auto;
   height: auto;
-  margin: 1.75em 0;
+  max-height: min(50vh, 28rem);
+  margin: 1.75em auto;
+  object-fit: contain;
   border-radius: 0.25rem;
 }
 

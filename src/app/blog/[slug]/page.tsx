@@ -2,7 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArticleBody } from "@/components/ArticleBody";
+import {
+  ArticleBody,
+  isUsefulPostExcerpt,
+} from "@/components/ArticleBody";
 import { EmptyState } from "@/components/common/EmptyState";
 import { JsonLd } from "@/components/JsonLd";
 import { RelatedPosts } from "@/components/sections/RelatedPosts";
@@ -140,25 +143,26 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
         <meta itemProp="datePublished" content={dateIso} />
       ) : null}
 
-      {/* Image above title (not full-viewport overlay) so mobile always shows the post. */}
+      {/* Constrained hero — never fill/viewport; avoids mobile image blow-up. */}
       <header className="border-b border-line/80">
         {imageUrl ? (
-          <div className="relative mx-auto w-full max-w-5xl sm:px-8 sm:pt-8">
-            <div className="relative aspect-[16/10] w-full max-h-[min(48vh,26rem)] overflow-hidden bg-ink-soft sm:rounded-2xl">
+          <div className="mx-auto w-full max-w-5xl sm:px-8 sm:pt-8">
+            <div className="overflow-hidden bg-ink-soft sm:rounded-2xl">
               <Image
                 src={imageUrl}
                 alt={post.title}
-                fill
+                width={1600}
+                height={900}
                 priority
                 sizes="(max-width: 768px) 100vw, 1024px"
-                className="object-cover"
+                className="blog-hero-image h-auto w-full object-cover"
                 itemProp="image"
               />
             </div>
           </div>
         ) : null}
 
-        <div className="relative z-10 mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+        <div className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
           <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex flex-wrap items-center gap-2 font-display text-sm text-steel-bright">
               <li>
@@ -220,7 +224,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
             {post.title}
           </h1>
 
-          {post.excerpt ? (
+          {isUsefulPostExcerpt(post.excerpt, post.content) ? (
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fog-muted sm:text-xl">
               {post.excerpt}
             </p>
@@ -263,7 +267,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
 
         {post.content ? (
           <div itemProp="articleBody">
-            <ArticleBody html={post.content} />
+            <ArticleBody html={post.content} featuredUrl={imageUrl} />
           </div>
         ) : (
           <EmptyState
