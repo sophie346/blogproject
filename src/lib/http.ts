@@ -56,7 +56,7 @@ export async function getAxiosErrorMessage(err: unknown, fallback: string) {
       /ECONNREFUSED/i.test(String(raw)) ||
       /connect ECONNREFUSED/i.test(String(ax.message))
     ) {
-      const base = (await getApiBase()) || "https://oneauto-backend.onechanneladmin.com";
+      const base = (await getApiBase()) || "https://backend.oneauto.us";
       return `BFF not reachable at ${base}.`;
     }
     return raw || fallback;

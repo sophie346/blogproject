@@ -18,7 +18,7 @@ export type TenantIdentity = {
 };
 
 /** Shared OneAuto BFF base (was ONEAUTO_API_BASE). */
-export const BLOG_API_BASE = "https://oneauto-backend.onechanneladmin.com";
+export const BLOG_API_BASE = "https://backend.oneauto.us";
 
 /** Fallback when Host is unknown (local / health probes). */
 export const DEFAULT_HOST = "localhost";
