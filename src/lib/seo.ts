@@ -157,7 +157,15 @@ export async function resolveBlogSeo(post: BlogDetail | BlogListItem) {
         post.excerpt ||
         description
     ).trim() || description;
-  const keywords = parseKeywords(seo.metaKeywords);
+  // Prefer explicit meta keywords; fall back to tag names (Yoast uses post tags).
+  const keywordsFromMeta = parseKeywords(seo.metaKeywords);
+  const keywordsFromTags = (post.tags || [])
+    .map((tag) => String(tag?.name || "").trim())
+    .filter(Boolean);
+  const keywords = keywordsFromMeta.length ? keywordsFromMeta : keywordsFromTags;
+  const articleSection = (post.categories || [])
+    .map((category) => String(category?.name || "").trim())
+    .filter(Boolean);
   const image = await resolveBlogImage(post);
   const twitterImage =
     getValidImageUrl(
@@ -184,6 +192,7 @@ export async function resolveBlogSeo(post: BlogDetail | BlogListItem) {
     twitterDescription,
     twitterImage,
     keywords,
+    articleSection,
     image,
     published,
     modified,
@@ -441,6 +450,7 @@ async function organizationNode() {
 async function websiteNode() {
   const siteConfig = await getSiteConfig();
   const siteUrl = await absoluteUrl("/");
+  const searchRoot = siteUrl.replace(/\/$/, "");
   return {
     "@type": "WebSite",
     "@id": `${siteUrl}#website`,
@@ -454,9 +464,13 @@ async function websiteNode() {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
-          urlTemplate: `${siteUrl}/?s={search_term_string}`,
+          urlTemplate: `${searchRoot}/?s={search_term_string}`,
         },
-        "query-input": "required name=search_term_string",
+        "query-input": {
+          "@type": "PropertyValueSpecification",
+          valueRequired: true,
+          valueName: "search_term_string",
+        },
       },
     ],
   };
@@ -464,13 +478,33 @@ async function websiteNode() {
 
 async function personNode() {
   const siteConfig = await getSiteConfig();
+  const siteUrl = await absoluteUrl("/");
   const authorSlug = slugify(siteConfig.author) || "author";
   const authorUrl = await absoluteUrl(`/author/${authorSlug}`);
+  const personId = `${siteUrl}#/schema/person/${authorSlug}`;
+  const logo = await getSiteLogoUrl();
+  const sameAs = [siteUrl.replace(/\/$/, ""), ...(await getSocialSameAs())].filter(
+    (value, index, all) => Boolean(value) && all.indexOf(value) === index
+  );
+
   return {
     "@type": "Person",
-    "@id": `${authorUrl}#/schema/person/author`,
+    "@id": personId,
     name: siteConfig.author,
     url: authorUrl,
+    ...(logo
+      ? {
+          image: {
+            "@type": "ImageObject",
+            inLanguage: siteConfig.language,
+            "@id": `${personId}#image`,
+            url: logo,
+            contentUrl: logo,
+            caption: siteConfig.author,
+          },
+        }
+      : {}),
+    ...(sameAs.length ? { sameAs } : {}),
   };
 }
 
@@ -479,13 +513,23 @@ export async function buildHomeJsonLd(options: {
   posts: BlogListItem[];
 }) {
   const siteConfig = await getSiteConfig();
+  const tenant = await getTenant();
+  const pageSeo = tenant.pageSeo || {};
   const { page, posts } = options;
   const siteUrl = await absoluteUrl("/");
   const canonical = await absoluteUrl(page > 1 ? `/?page=${page}` : "/");
-  const title =
-    page > 1
-      ? `${siteConfig.name} Blog — Page ${page}`
-      : `${siteConfig.name} Blog`;
+  const baseTitle =
+    String(
+      pageSeo.metaTitle || pageSeo.title || `${siteConfig.name} Blog`
+    ).trim() || `${siteConfig.name} Blog`;
+  const title = page > 1 ? `${baseTitle} — Page ${page}` : baseTitle;
+  const description =
+    String(
+      pageSeo.metaDescription ||
+        pageSeo.description ||
+        siteConfig.description ||
+        ""
+    ).trim() || siteConfig.description;
 
   const graph: Record<string, unknown>[] = [
     {
@@ -495,7 +539,7 @@ export async function buildHomeJsonLd(options: {
       name: title,
       isPartOf: { "@id": `${siteUrl}#website` },
       about: { "@id": `${siteUrl}#organization` },
-      description: siteConfig.description,
+      description,
       breadcrumb: { "@id": `${canonical}#breadcrumb` },
       inLanguage: siteConfig.language,
     },
@@ -542,6 +586,8 @@ export async function buildArticleJsonLd(post: BlogDetail) {
   const siteUrl = await absoluteUrl("/");
   const url = await absoluteUrl(`/blog/${post.slug}`);
   const wordCount = estimateWordCount(post.content || post.excerpt);
+  const authorSlug = slugify(siteConfig.author) || "author";
+  const personId = `${siteUrl}#/schema/person/${authorSlug}`;
 
   const graph: Record<string, unknown>[] = [
     {
@@ -550,7 +596,7 @@ export async function buildArticleJsonLd(post: BlogDetail) {
       isPartOf: { "@id": url },
       author: {
         name: siteConfig.author,
-        "@id": `${siteUrl}#/schema/person/author`,
+        "@id": personId,
       },
       headline: post.title,
       description: seo.description,
@@ -566,13 +612,16 @@ export async function buildArticleJsonLd(post: BlogDetail) {
           }
         : {}),
       ...(seo.keywords.length ? { keywords: seo.keywords } : {}),
+      ...(seo.articleSection.length
+        ? { articleSection: seo.articleSection }
+        : {}),
       inLanguage: siteConfig.language,
     },
     {
       "@type": "WebPage",
       "@id": url,
       url,
-      name: `${seo.title} · ${siteConfig.name}`,
+      name: seo.title,
       isPartOf: { "@id": `${siteUrl}#website` },
       ...(seo.image
         ? {
