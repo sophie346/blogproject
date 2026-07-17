@@ -58,7 +58,7 @@ export async function FeaturedPosts({
               <p className="featured-card__excerpt featured-card__excerpt--compact">{post.excerpt}</p>
             ) : null}
             <span className="blog-card__cta">
-              Read story
+              Read blog
               <span className="blog-card__cta-arrow" aria-hidden>
                 →
               </span>

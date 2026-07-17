@@ -25,7 +25,7 @@ export default function Hero({
           {subtitle}
         </p>
         <div className="fade-up fade-up-delay-2 mt-10 flex flex-wrap items-center justify-center gap-4">
-          <a href="#stories" className="hero-cta">
+          <a href="#blogs" className="hero-cta">
             {cta}
             <span aria-hidden>↓</span>
           </a>

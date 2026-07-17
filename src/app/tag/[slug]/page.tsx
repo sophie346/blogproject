@@ -23,7 +23,7 @@ export async function generateMetadata({
   const title = `#${tag.name} · ${siteConfig.name}`;
   return {
     title: { absolute: title },
-    description: `Stories tagged ${tag.name} on ${siteConfig.name}.`,
+    description: `Blogs tagged ${tag.name} on ${siteConfig.name}.`,
     alternates: { canonical: await absoluteUrl(`/tag/${tag.slug}`) },
   };
 }
@@ -43,7 +43,7 @@ export default async function TagPage({ params }: TagPageProps) {
       eyebrow="Tag"
       title={tag.name}
       posts={posts}
-      emptyTitle="No stories with this tag yet"
+      emptyTitle="No blogs with this tag yet"
       emptyMessage="Check back soon or explore other topics."
     />
   );

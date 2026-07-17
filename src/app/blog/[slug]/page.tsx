@@ -45,7 +45,7 @@ export async function generateMetadata({
 
   if (!result.ok) {
     return {
-      title: "Story not found",
+      title: "Blog not found",
       robots: { index: false, follow: false },
     };
   }
@@ -79,7 +79,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
               ? "Website label required"
               : result.reason === "missing_auth"
                 ? "API credentials required"
-                : "Couldn’t load this story"
+                : "Couldn’t load this blog"
           }
           message={result.message}
         />
@@ -115,7 +115,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
   const related = await getRelatedBlogs(post.slug, 3);
   const shareUrl = await absoluteUrl(`/blog/${post.slug}`);
   const homeHref = await siteHref("/");
-  const storiesHref = await siteHref("/#stories");
+  const blogsHref = await siteHref("/#blogs");
 
   const isPreview = String(post.status || "").toLowerCase() !== "published";
 
@@ -140,29 +140,32 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
         <meta itemProp="datePublished" content={dateIso} />
       ) : null}
 
-      <header className="relative min-h-[70vh] overflow-hidden">
+      {/* Image above title (not full-viewport overlay) so mobile always shows the post. */}
+      <header className="border-b border-line/80">
         {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={post.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-            itemProp="image"
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(142,180,212,0.35),transparent_55%),linear-gradient(135deg,#152033,#0c1118)]"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30" />
-        <div className="relative mx-auto flex min-h-[70vh] w-full max-w-3xl flex-col justify-end px-5 pb-16 pt-28 sm:px-8">
-          <nav aria-label="Breadcrumb" className="mb-8">
+          <div className="relative mx-auto w-full max-w-5xl sm:px-8 sm:pt-8">
+            <div className="relative aspect-[16/10] w-full max-h-[min(48vh,26rem)] overflow-hidden bg-ink-soft sm:rounded-2xl">
+              <Image
+                src={imageUrl}
+                alt={post.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 1024px"
+                className="object-cover"
+                itemProp="image"
+              />
+            </div>
+          </div>
+        ) : null}
+
+        <div className="relative z-10 mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+          <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex flex-wrap items-center gap-2 font-display text-sm text-steel-bright">
               <li>
-                <Link href={homeHref} className="transition-colors hover:text-amber-soft">
+                <Link
+                  href={homeHref}
+                  className="transition-colors hover:text-amber-soft"
+                >
                   Home
                 </Link>
               </li>
@@ -171,10 +174,10 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
               </li>
               <li>
                 <Link
-                  href={storiesHref}
+                  href={blogsHref}
                   className="transition-colors hover:text-amber-soft"
                 >
-                  Stories
+                  Blogs
                 </Link>
               </li>
               <li aria-hidden className="text-fog-muted/40">
@@ -186,7 +189,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
             </ol>
           </nav>
 
-          <div className="fade-up flex flex-wrap items-center gap-x-3 gap-y-2 font-display text-xs uppercase tracking-[0.18em] text-fog-muted">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-display text-xs uppercase tracking-[0.18em] text-fog-muted">
             {dateIso && date ? (
               <time dateTime={dateIso} itemProp="datePublished">
                 {date}
@@ -212,19 +215,19 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
 
           <h1
             itemProp="headline"
-            className="fade-up fade-up-delay-1 mt-5 font-display text-4xl font-bold tracking-tight text-fog sm:text-5xl md:text-6xl"
+            className="mt-5 font-display text-3xl font-bold tracking-tight text-fog sm:text-5xl"
           >
             {post.title}
           </h1>
 
           {post.excerpt ? (
-            <p className="fade-up fade-up-delay-2 mt-6 max-w-2xl text-lg leading-relaxed text-fog-muted sm:text-xl">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fog-muted sm:text-xl">
               {post.excerpt}
             </p>
           ) : null}
 
           <p
-            className="fade-up fade-up-delay-2 mt-8 font-display text-sm text-fog-muted"
+            className="mt-8 font-display text-sm text-fog-muted"
             itemProp="author"
             itemScope
             itemType="https://schema.org/Person"
@@ -265,7 +268,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
         ) : (
           <EmptyState
             title="No content yet"
-            message="This story doesn’t include article body content yet."
+            message="This blog doesn’t include article body content yet."
           />
         )}
 
@@ -277,10 +280,10 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
 
         <div className="mt-16">
           <Link
-            href={storiesHref}
+            href={blogsHref}
             className="inline-flex items-center gap-2 border border-amber/50 bg-amber/10 px-5 py-3 font-display text-sm font-medium text-amber-soft transition hover:border-amber hover:bg-amber/20"
           >
-            Browse all stories
+            Browse all blogs
             <span aria-hidden>→</span>
           </Link>
         </div>

@@ -9,7 +9,7 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
   brand: {
     name: "Blog",
     alternateName: "blog",
-    tagline: "Stories worth reading.",
+    tagline: "Blogs worth reading.",
     description: "Latest articles and updates.",
     author: "Editorial",
     logo: "",
@@ -18,18 +18,18 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
   },
   copy: {
     heroEyebrow: "Editorial",
-    heroTitle: "Latest stories",
+    heroTitle: "Latest blogs",
     heroSubtitle: "Product updates, guides, and notes from the field.",
-    heroCta: "Browse latest stories",
+    heroCta: "Browse blogs",
     storiesEyebrow: "Latest",
-    storiesHeading: "Latest stories",
+    storiesHeading: "Latest blogs",
     storiesDescription: "Fresh reads from the editorial desk.",
     footerTagline: "Clarity over clutter.",
-    notFoundTitle: "This story isn’t here",
+    notFoundTitle: "This blog isn’t here",
     notFoundMessage:
       "The page may have moved, or the slug doesn’t match a published post.",
     notFoundCta: "Back to home",
-    emptyTitle: "No stories yet",
+    emptyTitle: "No blogs yet",
     emptyMessage: "Publish a blog for this website in ChannelAdmin",
   },
   seo: {
@@ -56,7 +56,7 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
     noindex: false,
     nofollow: false,
   },
-  nav: [{ label: "Stories", href: "/#stories" }],
+  nav: [{ label: "Blogs", href: "/#blogs" }],
   footerGroups: [],
   social: {},
   footerContact: {

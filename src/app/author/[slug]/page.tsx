@@ -23,7 +23,7 @@ export async function generateMetadata({
   const title = `${author.name} · ${siteConfig.name}`;
   return {
     title: { absolute: title },
-    description: author.bio || `Stories by ${author.name} on ${siteConfig.name}.`,
+    description: author.bio || `Blogs by ${author.name} on ${siteConfig.name}.`,
     alternates: { canonical: await absoluteUrl(`/author/${author.slug}`) },
   };
 }
@@ -44,7 +44,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
       title={author.name}
       description={author.bio}
       posts={posts}
-      emptyTitle="No stories from this author yet"
+      emptyTitle="No blogs from this author yet"
       emptyMessage="Check back soon."
     />
   );

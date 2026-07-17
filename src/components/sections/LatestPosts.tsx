@@ -21,7 +21,7 @@ export async function LatestPosts({
   page,
   totalcount,
   limit,
-  heading = "Latest stories",
+  heading = "Latest blogs",
   eyebrow = "Latest",
   description = "Curated reads from the blog.",
   emptyTitle,
@@ -31,9 +31,9 @@ export async function LatestPosts({
 
   return (
     <section
-      id="stories"
+      id="blogs"
       className="stories-section relative scroll-mt-8 bg-ink px-5 py-16 sm:px-8 sm:py-24"
-      aria-labelledby="stories-heading"
+      aria-labelledby="blogs-heading"
     >
       <div className="mx-auto w-full max-w-6xl">
         <div className="stories-section__header mb-10 flex flex-col gap-6 border-b border-line pb-8 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
@@ -42,7 +42,7 @@ export async function LatestPosts({
               {eyebrow}
             </p>
             <h2
-              id="stories-heading"
+              id="blogs-heading"
               className="mt-3 font-display text-3xl font-semibold tracking-tight text-fog sm:text-4xl"
             >
               {heading}
@@ -76,7 +76,7 @@ export async function LatestPosts({
               totalcount={totalcount}
               limit={limit}
               basePath={homePath}
-              hash="#stories"
+              hash="#blogs"
             />
           </>
         )}

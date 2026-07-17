@@ -5,7 +5,7 @@ import { getTenant } from "@/lib/tenant";
 
 /** Shared header — colors from theme.tokens (headerBg / headerFg / cta*). */
 export default async function Header() {
-  const { nav, brand } = await getTenant();
+  const { nav, brand, copy } = await getTenant();
 
   const uniqueNav = nav.filter(
     (item, index, list) =>
@@ -15,13 +15,22 @@ export default async function Header() {
   const resolvedNav = await Promise.all(
     uniqueNav.map(async (item) => ({
       ...item,
+      // Migrate old "Stories" nav labels/hashes without requiring a DB re-save.
+      label: item.label === "Stories" ? "Blogs" : item.label,
       href: item.href.startsWith("http")
         ? item.href
-        : await siteHref(item.href),
+        : await siteHref(
+            item.href.includes("#stories")
+              ? item.href.replace("#stories", "#blogs")
+              : item.href === "/#stories"
+                ? "/#blogs"
+                : item.href
+          ),
     }))
   );
 
-  const storiesHref = await siteHref("/#stories");
+  const blogsHref = await siteHref("/#blogs");
+  const ctaLabel = copy.heroCta?.trim() || "Browse blogs";
 
   return (
     <header className="theme-header sticky top-0 z-30 border-b backdrop-blur-md">
@@ -44,10 +53,10 @@ export default async function Header() {
         </nav>
 
         <a
-          href={storiesHref}
+          href={blogsHref}
           className="theme-header__cta hidden shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-xs font-semibold transition sm:inline-flex"
         >
-          Read {brand.name}
+          {ctaLabel.includes(brand.name) ? "Browse blogs" : ctaLabel}
           <span aria-hidden>→</span>
         </a>
       </div>

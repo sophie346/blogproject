@@ -8,7 +8,7 @@ type NewsletterProps = {
  * form posts nowhere by default so tenants can attach their own action. */
 export function Newsletter({
   heading = "Stay in the loop",
-  message = "New stories, straight to your inbox. No spam.",
+  message = "New blogs, straight to your inbox. No spam.",
   brandName,
 }: NewsletterProps) {
   return (

@@ -10,7 +10,7 @@ import type { BlogListItem } from "@/types/blog";
 function resolveCategory(post: BlogListItem): string {
   if (post.categories?.[0]?.name) return post.categories[0].name;
   if (post.tags?.[0]?.name) return post.tags[0].name;
-  return "Stories";
+  return "Blogs";
 }
 
 /**

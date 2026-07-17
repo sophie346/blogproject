@@ -45,7 +45,7 @@ export default function Hero({
 
           <div className="fade-up fade-up-delay-2 mt-7 flex flex-wrap items-center gap-3">
             <a
-              href="#stories"
+              href="#blogs"
               className="inline-flex items-center gap-2 rounded-xl bg-amber px-5 py-3 font-display text-sm font-semibold text-white no-underline shadow-[0_12px_40px_color-mix(in_srgb,var(--amber)_35%,transparent)] transition hover:brightness-110"
             >
               {cta}

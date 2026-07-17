@@ -46,7 +46,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const categories = tenant.sections.categories ? await getCategories() : [];
   const stat =
     result.ok && totalcount > 0
-      ? `${totalcount} ${totalcount === 1 ? "story" : "stories"} published`
+      ? `${totalcount} ${totalcount === 1 ? "blog" : "blogs"} published`
       : undefined;
 
   const emptyTitle = !result.ok
@@ -56,7 +56,7 @@ export default async function Home({ searchParams }: HomeProps) {
         ? "API credentials required"
         : result.message.toLowerCase().includes("expired")
           ? "Session expired"
-          : "Couldn’t load stories"
+          : "Couldn’t load blogs"
     : tenant.copy.emptyTitle;
   const emptyMessage = !result.ok ? result.message : tenant.copy.emptyMessage;
 

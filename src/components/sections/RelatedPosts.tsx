@@ -18,7 +18,7 @@ export async function RelatedPosts({ posts }: RelatedPostsProps) {
         Keep reading
       </p>
       <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-fog">
-        More stories
+        More blogs
       </h2>
       <ul className="related-posts__list">
         {await Promise.all(

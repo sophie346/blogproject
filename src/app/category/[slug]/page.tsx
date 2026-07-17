@@ -25,7 +25,7 @@ export async function generateMetadata({
     title: { absolute: title },
     description:
       category.description ||
-      `Stories filed under ${category.name} on ${siteConfig.name}.`,
+      `Blogs filed under ${category.name} on ${siteConfig.name}.`,
     alternates: { canonical: await absoluteUrl(`/category/${category.slug}`) },
   };
 }
@@ -46,7 +46,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       title={category.name}
       description={category.description}
       posts={posts}
-      emptyTitle="No stories in this category yet"
+      emptyTitle="No blogs in this category yet"
       emptyMessage="Check back soon or explore other topics."
     />
   );
