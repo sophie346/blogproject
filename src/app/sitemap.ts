@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
+import { getAuthors } from "@/services/authors";
 import { getBlogs } from "@/services/blogs";
+import { getCategories } from "@/services/categories";
 import { getBlogSitemapFromDb } from "@/services/sitemap";
+import { getTags } from "@/services/tags";
 import { absoluteUrl, toIsoDate } from "@/lib/seo";
 
 function toChangeFrequency(
@@ -84,6 +87,51 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (result.data.length === 0) break;
     page += 1;
+  }
+
+  try {
+    const categories = await getCategories();
+    for (const category of categories) {
+      if (!category.slug) continue;
+      entries.push({
+        url: await absoluteUrl(`/category/${category.slug}`),
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
+  } catch {
+    /* optional */
+  }
+
+  try {
+    const tags = await getTags();
+    for (const tag of tags) {
+      if (!tag.slug) continue;
+      entries.push({
+        url: await absoluteUrl(`/tag/${tag.slug}`),
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.5,
+      });
+    }
+  } catch {
+    /* optional */
+  }
+
+  try {
+    const authors = await getAuthors();
+    for (const author of authors) {
+      if (!author.slug) continue;
+      entries.push({
+        url: await absoluteUrl(`/author/${author.slug}`),
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.4,
+      });
+    }
+  } catch {
+    /* optional */
   }
 
   return entries;

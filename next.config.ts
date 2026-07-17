@@ -12,6 +12,8 @@ const ASSET_PREFIX = "/blog";
 
 const nextConfig: NextConfig = {
   assetPrefix: ASSET_PREFIX,
+  // Match WordPress permalinks (/blog/slug/) for SEO cutover / 301 parity.
+  trailingSlash: true,
   images: {
     // Prefix Image optimizer URLs for shared hosts (do NOT use loaderFile —
     // that disables the built-in /_next/image API and 404s as Coming soon).

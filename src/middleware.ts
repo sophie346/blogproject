@@ -48,7 +48,18 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  const internalPath = toInternalPath(site.pathPrefix, pathname);
+  let internalPath = toInternalPath(site.pathPrefix, pathname);
+  // next.config trailingSlash: true — page rewrites need a trailing slash;
+  // keep file routes (sitemap.xml, feed.xml, robots.txt) as-is.
+  const leaf = internalPath.split("/").pop() || "";
+  if (
+    internalPath !== "/" &&
+    !internalPath.endsWith("/") &&
+    leaf &&
+    !leaf.includes(".")
+  ) {
+    internalPath = `${internalPath}/`;
+  }
   const url = request.nextUrl.clone();
   url.pathname = internalPath;
 

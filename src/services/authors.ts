@@ -18,7 +18,14 @@ export async function getDefaultAuthor(): Promise<Author> {
 export async function getAuthorBySlug(slug: string): Promise<Author | null> {
   const normalized = slugify(slug);
   const authors = await getAuthors();
-  return authors.find((author) => slugify(author.slug) === normalized) || null;
+  const found = authors.find(
+    (author) => slugify(author.slug) === normalized
+  );
+  if (found) return found;
+  // Fall back to brand.author when authors[] is empty in settings.
+  const fallback = await getDefaultAuthor();
+  if (slugify(fallback.slug) === normalized) return fallback;
+  return null;
 }
 
 /**

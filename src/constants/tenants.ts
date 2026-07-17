@@ -185,6 +185,8 @@ export function toInternalPath(pathPrefix: string, pathname: string): string {
     "tag",
     "api",
     "feed.xml",
+    "sitemap.xml",
+    "robots.txt",
     "_next",
     "__coming-soon",
   ]);
@@ -205,15 +207,21 @@ export function toPublicPath(pathPrefix: string, appPath: string): string {
   const prefix = normalizePathPrefix(pathPrefix);
   let path = appPath.startsWith("/") ? appPath : `/${appPath}`;
 
+  let out: string;
   if (path.startsWith("/blog/")) {
     const slugPart = path.slice("/blog".length);
-    if (!prefix) return `/blog${slugPart}`;
-    return `${prefix}${slugPart}`;
+    if (!prefix) out = `/blog${slugPart}`;
+    else out = `${prefix}${slugPart}`;
+  } else if (path === "/" || path === "") {
+    out = prefix || "/";
+  } else {
+    out = `${prefix}${path}`;
   }
 
-  if (path === "/" || path === "") {
-    return prefix || "/";
+  // Trailing slash for page URLs (WordPress parity / next.config trailingSlash).
+  const leaf = out.split("/").pop() || "";
+  if (out !== "/" && !out.endsWith("/") && leaf && !leaf.includes(".")) {
+    out = `${out}/`;
   }
-
-  return `${prefix}${path}`;
+  return out;
 }

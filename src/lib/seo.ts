@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { estimateReadingTime } from "@/lib/blog-format";
+import { slugify } from "@/lib/slug";
 import { getSiteConfig } from "./config";
 import { getValidImageUrl, resolvePostImage } from "./images";
 import { getTenant } from "./tenant";
@@ -31,11 +32,24 @@ export async function absoluteUrl(appPath = "/") {
   }
 
   // When site is at domain root, keep /blog/slug public shape for articles
+  let url: string;
   if ((!prefix || prefix === "/") && appPath.startsWith("/blog/")) {
-    return `${base}${appPath}`;
+    url = `${base}${appPath}`;
+  } else {
+    url = `${base}${relative.startsWith("/") ? relative : `/${relative}`}`;
   }
 
-  return `${base}${relative.startsWith("/") ? relative : `/${relative}`}`;
+  // Match next.config trailingSlash + WordPress permalinks (skip files).
+  const leaf = url.split("?")[0].split("/").pop() || "";
+  if (
+    !url.includes("?") &&
+    !url.endsWith("/") &&
+    leaf &&
+    !leaf.includes(".")
+  ) {
+    url = `${url}/`;
+  }
+  return url;
 }
 
 export async function getSocialSameAs() {
@@ -335,7 +349,14 @@ export async function buildArticleMetadata(post: BlogDetail): Promise<Metadata> 
     },
     description: seo.description,
     keywords: seo.keywords.length ? seo.keywords : undefined,
-    authors: [{ name: siteConfig.author, url: await absoluteUrl("/") }],
+    authors: [
+      {
+        name: siteConfig.author,
+        url: await absoluteUrl(
+          `/author/${slugify(siteConfig.author) || "author"}`
+        ),
+      },
+    ],
     creator: siteConfig.author,
     publisher: siteConfig.name,
     category: "Blog",
@@ -443,12 +464,13 @@ async function websiteNode() {
 
 async function personNode() {
   const siteConfig = await getSiteConfig();
-  const siteUrl = await absoluteUrl("/");
+  const authorSlug = slugify(siteConfig.author) || "author";
+  const authorUrl = await absoluteUrl(`/author/${authorSlug}`);
   return {
     "@type": "Person",
-    "@id": `${siteUrl}#/schema/person/author`,
+    "@id": `${authorUrl}#/schema/person/author`,
     name: siteConfig.author,
-    url: siteUrl,
+    url: authorUrl,
   };
 }
 
