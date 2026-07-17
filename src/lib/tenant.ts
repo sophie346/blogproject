@@ -1,10 +1,9 @@
 import { cache } from "react";
 import { headers } from "next/headers";
-import { clients } from "@/clients";
 import { BLOG_API_BASE, type SiteBinding } from "@/constants/tenants";
-import { DEFAULT_CLIENT } from "@/constants/client";
 import { loadTheme } from "@/lib/load-theme";
-import type { ClientDefinition, TenantConfig } from "@/types/tenant";
+import { fetchBlogSettings } from "@/services/blog-settings";
+import type { TenantConfig } from "@/types/tenant";
 
 async function readBlogHeaders() {
   const h = await headers();
@@ -13,7 +12,6 @@ async function readBlogHeaders() {
     id: h.get("x-blog-id") || "",
     clientName: h.get("x-blog-clientname") || "",
     label: h.get("x-blog-label") || "",
-    themeKey: h.get("x-blog-theme-key") || "",
     pathPrefix: h.get("x-blog-path-prefix") || "",
     siteUrl: h.get("x-blog-site-url") || "",
     authToken: h.get("x-blog-auth-token") || "",
@@ -21,21 +19,20 @@ async function readBlogHeaders() {
   };
 }
 
-function resolveDefinition(themeKey: string): ClientDefinition {
-  return clients[themeKey] || clients[DEFAULT_CLIENT];
-}
-
-function buildTenant(
-  mapping: Pick<
-    SiteBinding,
-    "themeKey" | "clientName" | "label" | "siteUrl" | "pathPrefix"
-  > & { pathPrefix: string },
-  host: string
-): TenantConfig {
-  const themeKey = mapping.themeKey || DEFAULT_CLIENT;
-  const def = resolveDefinition(themeKey);
-  const theme = loadTheme(themeKey);
-  const { theme: _ignored, ...rest } = def;
+async function buildTenant(
+  mapping: Pick<SiteBinding, "clientName" | "label" | "siteUrl" | "pathPrefix"> & {
+    pathPrefix: string;
+  },
+  host: string,
+  authToken: string
+): Promise<TenantConfig> {
+  const settings = await fetchBlogSettings(
+    mapping.clientName,
+    mapping.label,
+    authToken
+  );
+  const { theme: settingsTheme, ...rest } = settings;
+  const theme = loadTheme(settingsTheme?.id || "default", settingsTheme?.tokens);
 
   const prefix = mapping.pathPrefix || "";
   const siteUrl = (
@@ -60,13 +57,13 @@ export const getTenantOrNull = cache(async (): Promise<TenantConfig | null> => {
 
   return buildTenant(
     {
-      themeKey: meta.themeKey || DEFAULT_CLIENT,
       clientName: meta.clientName,
       label: meta.label,
       siteUrl: meta.siteUrl || undefined,
       pathPrefix: meta.pathPrefix,
     },
-    meta.host
+    meta.host,
+    meta.authToken
   );
 });
 
@@ -78,23 +75,13 @@ export const getTenant = cache(async (): Promise<TenantConfig> => {
   return tenant;
 });
 
-/** BFF headers: `clientname` (org) + `label` (website). */
+/** BFF headers: `clientname` (org) + `label` (website). Identity from mount headers. */
 export const getApiConfig = cache(async () => {
-  const tenant = await getTenantOrNull();
   const meta = await readBlogHeaders();
-  if (!tenant) {
-    return {
-      apiBase: BLOG_API_BASE.replace(/\/$/, ""),
-      clientName: "",
-      label: "",
-      authToken: "",
-    };
-  }
-
   return {
     apiBase: BLOG_API_BASE.replace(/\/$/, ""),
-    clientName: tenant.clientName,
-    label: tenant.label,
+    clientName: meta.matched ? meta.clientName : "",
+    label: meta.matched ? meta.label : "",
     authToken: meta.authToken || "",
   };
 });

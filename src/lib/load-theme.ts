@@ -1,16 +1,18 @@
 import type { ThemeConfig, ThemeId } from "@/types/theme";
-import { DEFAULT_CLIENT } from "@/constants/client";
-import oneautoTheme from "@/data/themes/oneauto.json";
-import nexusTheme from "@/data/themes/nexus.json";
+import defaultTheme from "@/data/themes/default.json";
+import modernTheme from "@/data/themes/modern.json";
 
 /**
- * Local theme registry — stand-in for a future tenant theme API.
- * Replace `loadTheme` body with a fetch to your DB/BFF when ready;
- * keep the same ThemeConfig return shape.
+ * Local CSS token presets keyed by theme id from blog settings.
+ * Settings may also send custom `tokens` which merge on top.
  */
-const THEME_FILES: Record<string, ThemeConfig> = {
-  oneauto: oneautoTheme as ThemeConfig,
-  nexus: nexusTheme as ThemeConfig,
+const THEME_PRESETS: Record<string, ThemeConfig> = {
+  default: defaultTheme as ThemeConfig,
+  modern: modernTheme as ThemeConfig,
+  luxury: {
+    id: "luxury",
+    tokens: (defaultTheme as ThemeConfig).tokens,
+  },
 };
 
 const FALLBACK_THEME: ThemeConfig = {
@@ -28,16 +30,25 @@ function normalizeTheme(raw: ThemeConfig | undefined): ThemeConfig {
 }
 
 /**
- * Load CSS theme values for a tenant.
- * Today: JSON files under `src/data/themes/<client>.json`.
- * Later: swap this for `fetch(\`${api}/tenants/${clientName}/theme\`)`.
+ * Resolve theme: preset by id, then overlay any custom tokens from settings.
  */
-export function loadTheme(clientName: string): ThemeConfig {
-  const key = (clientName || DEFAULT_CLIENT).trim().toLowerCase();
-  return normalizeTheme(THEME_FILES[key] || THEME_FILES[DEFAULT_CLIENT]);
+export function loadTheme(
+  themeId: string,
+  customTokens?: ThemeConfig["tokens"]
+): ThemeConfig {
+  const key = (themeId || "default").trim().toLowerCase();
+  const preset = normalizeTheme(THEME_PRESETS[key] || THEME_PRESETS.default);
+  return {
+    id: (["default", "modern", "luxury"].includes(key)
+      ? key
+      : preset.id) as ThemeId,
+    tokens: {
+      ...(preset.tokens || {}),
+      ...(customTokens || {}),
+    },
+  };
 }
 
-/** Exposed for tests / admin tooling. */
-export function listThemeClients(): string[] {
-  return Object.keys(THEME_FILES);
+export function listThemePresets(): string[] {
+  return Object.keys(THEME_PRESETS);
 }

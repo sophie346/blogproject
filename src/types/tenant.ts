@@ -53,6 +53,29 @@ export type TenantSeo = {
   siteLogo?: string;
 };
 
+/** Full homepage SEO (ChannelAdmin SEOTab / pageSeo). */
+export type TenantPageSeo = {
+  title?: string;
+  description?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  focusKeyword?: string;
+  openGraphTitle?: string;
+  openGraphDescription?: string;
+  openGraphImageUrl?: string;
+  openGraphType?: string;
+  twitterCardTitle?: string;
+  twitterCardDescription?: string;
+  twitterCardImageUrl?: string;
+  twitterCardType?: string;
+  category?: string;
+  faqItems?: { question: string; answer: string }[];
+  schemaMarkup?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+};
+
 /** Full resolved tenant configuration used across the app. */
 export type TenantConfig = {
   /** Organization id — BFF/admin header `clientname` (one org, many sites). */
@@ -67,6 +90,8 @@ export type TenantConfig = {
   theme: ThemeConfig;
   copy: TenantCopy;
   seo: TenantSeo;
+  /** Homepage (blog list) SEO — mirrors ChannelAdmin SEOTab. */
+  pageSeo?: TenantPageSeo;
   nav: NavLink[];
   footerGroups: FooterLinkGroup[];
   social: SocialLinks;
@@ -83,14 +108,12 @@ export type TenantConfig = {
 };
 
 /**
- * Client definition (`src/clients/<name>.ts`) — single source for BFF identity
- * (`clientName`, `label`) plus brand/copy/UI. Host mounts live in
- * `constants/tenants`. Theme CSS tokens: `src/data/themes/<themeKey>.json`.
+ * Blog settings payload from ChannelAdmin / BFF (`/prod/blog-settings`).
+ * Host → `clientName` + `label` mounts live in `constants/tenants`.
  */
 export type ClientDefinition = Omit<
   TenantConfig,
   "theme" | "siteUrl" | "pathPrefix"
 > & {
-  /** Optional override; normally set from theme JSON / API. */
   theme?: ThemeConfig;
 };

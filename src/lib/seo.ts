@@ -145,18 +145,36 @@ export async function resolveBlogSeo(post: BlogDetail | BlogListItem) {
     ).trim() || description;
   const keywords = parseKeywords(seo.metaKeywords);
   const image = await resolveBlogImage(post);
+  const twitterImage =
+    getValidImageUrl(
+      typeof seo.twitterCardImageUrl === "string"
+        ? seo.twitterCardImageUrl
+        : undefined
+    ) || image;
+  const twitterTitle =
+    String(seo.twitterCardTitle || ogTitle || title).trim() || ogTitle;
+  const twitterDescription =
+    String(seo.twitterCardDescription || ogDescription || description).trim() ||
+    ogDescription;
   const published = toIsoDate(post.publishedDate);
   const modified = toIsoDate(post.updatedDate) || published;
+  const noindex = Boolean(seo.noindex);
+  const nofollow = Boolean(seo.nofollow);
 
   return {
     title,
     description,
     ogTitle,
     ogDescription,
+    twitterTitle,
+    twitterDescription,
+    twitterImage,
     keywords,
     image,
     published,
     modified,
+    noindex,
+    nofollow,
   };
 }
 
@@ -186,16 +204,55 @@ export async function buildHomeMetadata(options: {
   totalPages: number;
 }): Promise<Metadata> {
   const siteConfig = await getSiteConfig();
+  const tenant = await getTenant();
+  const pageSeo = tenant.pageSeo || {};
   const { page } = options;
   const isPaginated = page > 1;
   const canonicalPath = isPaginated ? `/?page=${page}` : "/";
   const canonical = await absoluteUrl(canonicalPath);
-  const title = isPaginated
-    ? `${siteConfig.name} Blog — Page ${page}`
-    : `${siteConfig.name} Blog`;
-  const description = siteConfig.description;
-  const ogImage = await getDefaultOgImage();
-  const keywords = (await getTenant()).seo.keywords;
+
+  const baseTitle =
+    String(
+      pageSeo.metaTitle || pageSeo.title || `${siteConfig.name} Blog`
+    ).trim() || `${siteConfig.name} Blog`;
+  const title = isPaginated ? `${baseTitle} — Page ${page}` : baseTitle;
+  const description =
+    String(
+      pageSeo.metaDescription ||
+        pageSeo.description ||
+        siteConfig.description ||
+        ""
+    ).trim() || siteConfig.description;
+
+  const ogTitle =
+    String(pageSeo.openGraphTitle || baseTitle || siteConfig.name).trim() ||
+    siteConfig.name;
+  const ogDescription =
+    String(pageSeo.openGraphDescription || description).trim() || description;
+  const twitterTitle =
+    String(pageSeo.twitterCardTitle || ogTitle).trim() || ogTitle;
+  const twitterDescription =
+    String(pageSeo.twitterCardDescription || ogDescription).trim() ||
+    ogDescription;
+
+  const ogImage =
+    getValidImageUrl(pageSeo.openGraphImageUrl) ||
+    (await getDefaultOgImage());
+  const twitterImage =
+    getValidImageUrl(pageSeo.twitterCardImageUrl) || ogImage;
+
+  const keywords =
+    parseKeywords(pageSeo.metaKeywords).length > 0
+      ? parseKeywords(pageSeo.metaKeywords)
+      : tenant.seo.keywords;
+
+  const robots =
+    pageSeo.noindex || pageSeo.nofollow
+      ? {
+          index: !pageSeo.noindex,
+          follow: !pageSeo.nofollow,
+        }
+      : indexRobots;
 
   return {
     title: {
@@ -206,7 +263,7 @@ export async function buildHomeMetadata(options: {
     authors: [{ name: siteConfig.author }],
     creator: siteConfig.author,
     publisher: siteConfig.name,
-    robots: indexRobots,
+    robots,
     alternates: {
       canonical,
       types: {
@@ -218,8 +275,8 @@ export async function buildHomeMetadata(options: {
       locale: siteConfig.locale,
       url: canonical,
       siteName: siteConfig.name,
-      title: siteConfig.name,
-      description,
+      title: ogTitle,
+      description: ogDescription,
       images: ogImage
         ? [
             {
@@ -227,16 +284,18 @@ export async function buildHomeMetadata(options: {
               width: 1200,
               height: 630,
               type: imageMimeType(ogImage),
-              alt: siteConfig.name,
+              alt: ogTitle,
             },
           ]
         : undefined,
     },
     twitter: {
-      card: "summary_large_image",
-      title: siteConfig.name,
-      description,
-      images: ogImage ? [ogImage] : undefined,
+      card:
+        (pageSeo.twitterCardType as "summary_large_image" | "summary") ||
+        "summary_large_image",
+      title: twitterTitle,
+      description: twitterDescription,
+      images: twitterImage ? [twitterImage] : undefined,
     },
   };
 }
@@ -262,6 +321,13 @@ export async function buildArticleMetadata(post: BlogDetail): Promise<Metadata> 
   const isPublic = String(post.status || "published").toLowerCase() === "published";
   const readingMinutes = estimateReadingTime(post.content || post.excerpt);
   const facebook = (tenant.social.facebook || "").trim();
+  const robots =
+    !isPublic || seo.noindex || seo.nofollow
+      ? {
+          index: isPublic && !seo.noindex,
+          follow: isPublic && !seo.nofollow,
+        }
+      : indexRobots;
 
   return {
     title: {
@@ -273,7 +339,7 @@ export async function buildArticleMetadata(post: BlogDetail): Promise<Metadata> 
     creator: siteConfig.author,
     publisher: siteConfig.name,
     category: "Blog",
-    robots: isPublic ? indexRobots : noindexRobots,
+    robots,
     alternates: {
       canonical: url,
       types: {
@@ -305,9 +371,9 @@ export async function buildArticleMetadata(post: BlogDetail): Promise<Metadata> 
     },
     twitter: {
       card: "summary_large_image",
-      title: seo.ogTitle,
-      description: seo.ogDescription,
-      images: seo.image ? [seo.image] : undefined,
+      title: seo.twitterTitle,
+      description: seo.twitterDescription,
+      images: seo.twitterImage ? [seo.twitterImage] : undefined,
     },
     other: {
       author: siteConfig.author,

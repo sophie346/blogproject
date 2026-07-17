@@ -37,7 +37,6 @@ export function middleware(request: NextRequest) {
   requestHeaders.set("x-blog-id", site.id);
   requestHeaders.set("x-blog-clientname", site.clientName);
   requestHeaders.set("x-blog-label", site.label);
-  requestHeaders.set("x-blog-theme-key", site.themeKey);
   requestHeaders.set("x-blog-path-prefix", normalizePathPrefix(site.pathPrefix));
   if (site.siteUrl) {
     requestHeaders.set("x-blog-site-url", site.siteUrl.replace(/\/$/, ""));

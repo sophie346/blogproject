@@ -1,40 +1,27 @@
 /**
- * Host + pathPrefix → which client module to use.
+ * Host + pathPrefix → BFF identity (`clientName` + `label`).
  *
- * Org identity (`clientName`) and website `label` live only on the client
- * definition (`src/clients/<name>.ts`). This file only mounts hosts/paths.
+ * Brand/copy/theme come from ChannelAdmin blog settings
+ * (`GET /prod/blog-settings`), not from static client modules.
  *
- * Optional per-site `label` override when one org has multiple websites.
  * Unknown Host/path → Coming soon. `/api/health` is always allowed.
  */
 
-import { clients } from "@/clients";
-import { DEFAULT_CLIENT } from "@/constants/client";
-import oneauto from "@/clients/oneauto";
-import nexus from "@/clients/nexus";
-import type { ClientDefinition } from "@/types/tenant";
-
-/** Declared mount — points at a client module; does not repeat org identity. */
-export type SiteMount = {
-  id: string;
-  hosts: string[];
-  pathPrefix: string;
-  /** Client definition from `src/clients/*` (single source of identity + brand). */
-  client: ClientDefinition;
-  /** Override website label when the same org has multiple sites. */
-  label?: string;
-  siteUrl?: string;
-  authToken?: string;
-};
-
-/** Resolved mount with BFF identity filled from the client definition. */
 export type SiteBinding = {
+  /** Stable id for debugging */
   id: string;
+  /** Hostnames that match this site (no port) */
   hosts: string[];
+  /**
+   * URL prefix where this blog is mounted.
+   * `/` = site root. `/blog` = https://host/blog.
+   */
   pathPrefix: string;
-  themeKey: string;
+  /** Org id — BFF header `clientname` */
   clientName: string;
+  /** Website label — BFF header + query `label` */
   label: string;
+  /** Public origin including pathPrefix for SEO (no trailing slash) */
   siteUrl?: string;
   authToken?: string;
 };
@@ -42,78 +29,55 @@ export type SiteBinding = {
 /** Shared storefront BFF base. */
 export const BLOG_API_BASE = "https://backend.oneauto.us";
 
-function themeKeyOf(client: ClientDefinition): string {
-  const entry = Object.entries(clients).find(([, def]) => def === client);
-  return entry?.[0] || client.label || DEFAULT_CLIENT;
-}
-
-function toBinding(mount: SiteMount): SiteBinding | null {
-  const clientName = mount.client.clientName?.trim();
-  const label = (mount.label ?? mount.client.label)?.trim();
-  if (!clientName || !label) return null;
-
-  return {
-    id: mount.id,
-    hosts: mount.hosts,
-    pathPrefix: mount.pathPrefix,
-    themeKey: themeKeyOf(mount.client),
-    clientName,
-    label,
-    siteUrl: mount.siteUrl,
-    authToken: mount.authToken,
-  };
-}
-
 /**
  * Onboarded sites. Longest matching pathPrefix wins for a Host.
  *
- * Add another blog on the same host by copying a row with a new pathPrefix
- * (and optional `label` override). Identity stays on the client module.
+ * Add another blog on the same host with a new pathPrefix + label.
  */
-const SITE_MOUNTS: SiteMount[] = [
+export const SITES: SiteBinding[] = [
   {
     id: "oneauto-local-root",
     hosts: ["localhost", "127.0.0.1"],
     pathPrefix: "/",
-    client: oneauto,
+    clientName: "oneauto",
+    label: "oneauto",
     siteUrl: "http://localhost:3000",
   },
   {
     id: "oneauto-local-blog",
     hosts: ["localhost", "127.0.0.1"],
     pathPrefix: "/blog",
-    client: oneauto,
+    clientName: "oneauto",
+    label: "oneauto",
     siteUrl: "http://localhost:3000/blog",
   },
   {
     id: "oneauto-onetruckparts-blog",
     hosts: ["onetruckparts.com", "www.onetruckparts.com"],
     pathPrefix: "/blog",
-    client: oneauto,
+    clientName: "oneauto",
+    label: "oneauto",
     siteUrl: "https://onetruckparts.com/blog",
   },
   {
     id: "nexustruckupgrades-blog",
     hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],
     pathPrefix: "/blog",
-    client: nexus,
+    clientName: "1p0248qcm3j1k401",
+    label: "nexus",
     siteUrl: "https://nexustruckupgrades.com/blog",
   },
 
-  // Example second blog on same host (uncomment / edit label when ready):
+  // Example second blog on same host:
   // {
   //   id: "oneauto-local-blogs2",
   //   hosts: ["localhost", "127.0.0.1"],
   //   pathPrefix: "/blogs2",
-  //   client: oneauto,
+  //   clientName: "oneauto",
   //   label: "another-website-label",
   //   siteUrl: "http://localhost:3000/blogs2",
   // },
 ];
-
-export const SITES: SiteBinding[] = SITE_MOUNTS.map(toBinding).filter(
-  (site): site is SiteBinding => site !== null
-);
 
 export function normalizeHost(host: string | null | undefined): string {
   if (!host) return "";
@@ -137,7 +101,7 @@ export function normalizePathname(pathname: string | null | undefined): string {
 function pathMatches(pathname: string, pathPrefix: string): boolean {
   const prefix = normalizePathPrefix(pathPrefix);
   const path = normalizePathname(pathname);
-  if (!prefix) return true; // root mount matches all paths on that host (longest prefix still wins)
+  if (!prefix) return true;
   return path === prefix || path.startsWith(`${prefix}/`);
 }
 
@@ -194,26 +158,22 @@ export function toInternalPath(pathPrefix: string, pathname: string): string {
 
   if (reserved.has(segment)) return rest;
 
-  // Single segment (or /slug/...) under a non-root mount → article route /blog/[slug]
   if (prefix !== "/blog") {
     return `/blog${rest}`;
   }
 
-  // Mounted at /blog: /blog/slug is already the internal article route
   return `/blog${rest}`;
 }
 
 /**
  * Build a public path for links/SEO from an internal app path.
- * Internal: `/`, `/blog/slug`, `/category/x`
- * Public depends on pathPrefix (`/blog`, `/blogs`, `/`, …).
  */
 export function toPublicPath(pathPrefix: string, appPath: string): string {
   const prefix = normalizePathPrefix(pathPrefix);
   let path = appPath.startsWith("/") ? appPath : `/${appPath}`;
 
   if (path.startsWith("/blog/")) {
-    const slugPart = path.slice("/blog".length); // /slug
+    const slugPart = path.slice("/blog".length);
     if (!prefix) return `/blog${slugPart}`;
     return `${prefix}${slugPart}`;
   }

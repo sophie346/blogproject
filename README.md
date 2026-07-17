@@ -1,41 +1,37 @@
 # Multi-tenant blog (`commonblog`)
 
-Host **+ path prefix** select which client module to use. BFF identity matches ChannelAdmin and is defined **only** on the client (`src/clients/<name>.ts`):
+Host **+ path prefix** select the site. Only identity is configured in code
+(`src/constants/tenants.ts`). Brand, copy, theme, and sections come from
+ChannelAdmin → **Blogs → Settings**.
 
 | Field | Header | Where defined |
 |-------|--------|---------------|
-| `clientName` | `clientname` | Client definition |
-| `label` | `label` | Client definition (optional per-mount override) |
+| `clientName` | `clientname` | `tenants.ts` mount |
+| `label` | `label` | `tenants.ts` mount |
+| brand / copy / theme | — | Admin blog settings API |
 
 Unknown Host/path → **Coming soon**.
 
 ## Current mounts (`src/constants/tenants.ts`)
 
-Mounts point at a client module — they do not restate `clientName` / `label`.
+| URL | clientName | label |
+|-----|------------|-------|
+| `http://localhost:3000/` | `oneauto` | `oneauto` |
+| `http://localhost:3000/blog` | `oneauto` | `oneauto` |
+| `https://onetruckparts.com/blog` | `oneauto` | `oneauto` |
+| `https://nexustruckupgrades.com/blog` | `1p0248qcm3j1k401` | `nexus` |
 
-| URL | Client module |
-|-----|---------------|
-| `http://localhost:3000/` | `oneauto` |
-| `http://localhost:3000/blog` | `oneauto` |
-| `https://onetruckparts.com/blog` | `oneauto` |
-| `https://nexustruckupgrades.com/blog` | `nexus` |
+## Admin
 
-## Multiple blogs on one domain
+Website settings → **Blogs** → nested tabs:
 
-Add another row in `SITE_MOUNTS` with a different `pathPrefix` and optional `label` override:
+- **Posts** — create / edit / delete posts
+- **Settings** — brand, homepage copy, theme, sections, SEO
 
-```ts
-{
-  id: "oneauto-blogs2",
-  hosts: ["localhost", "onetruckparts.com", "www.onetruckparts.com"],
-  pathPrefix: "/blogs2",
-  client: oneauto,
-  label: "second-website-label",
-  siteUrl: "https://onetruckparts.com/blogs2",
-},
-```
+APIs:
 
-Then `/blogs` and `/blogs2` (or `/blog` + `/blogs2`) each send their own `clientname` + `label` to the BFF.
+- Admin: `GET/POST /inventory/blogs/settings?label=`
+- Storefront: `GET /prod/blog-settings?label=`
 
 ## Setup
 
@@ -43,9 +39,6 @@ Then `/blogs` and `/blogs2` (or `/blog` + `/blogs2`) each send their own `client
 npm install
 npm run dev
 ```
-
-- [http://localhost:3000/](http://localhost:3000/) → oneauto  
-- [http://localhost:3000/blog](http://localhost:3000/blog) → oneauto  
 
 ## Deploy
 
