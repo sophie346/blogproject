@@ -14,7 +14,8 @@ const nextConfig: NextConfig = {
     // assetPrefix alone does NOT prefix <Image> optimizer URLs in this Next version.
     // Custom loader forces /blog/_next/image so LB hits commonblog (not storefront /_next).
     loader: "custom",
-    loaderFile: "./src/lib/image-loader.ts",
+    // Must live at repo root — Docker runner copies this beside next.config.ts (no /src).
+    loaderFile: "./image-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
