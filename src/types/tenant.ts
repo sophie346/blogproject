@@ -82,15 +82,15 @@ export type TenantConfig = {
   };
 };
 
-/** A client definition file exports brand/copy/UI. Runtime identity
- * (clientName, label, siteUrl) comes from `constants/tenants` Host mapping.
- * Theme CSS tokens load from `src/data/themes/<themeKey>.json`. */
+/**
+ * Client definition (`src/clients/<name>.ts`) — single source for BFF identity
+ * (`clientName`, `label`) plus brand/copy/UI. Host mounts live in
+ * `constants/tenants`. Theme CSS tokens: `src/data/themes/<themeKey>.json`.
+ */
 export type ClientDefinition = Omit<
   TenantConfig,
-  "clientName" | "label" | "theme" | "siteUrl" | "pathPrefix"
+  "theme" | "siteUrl" | "pathPrefix"
 > & {
-  clientName?: string;
-  label?: string;
   /** Optional override; normally set from theme JSON / API. */
   theme?: ThemeConfig;
 };

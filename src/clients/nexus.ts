@@ -2,11 +2,11 @@ import type { ClientDefinition } from "@/types/tenant";
 
 /**
  * Nexus — red / black / white editorial theme.
- * CSS tokens live in src/data/themes/nexus.json (via loadTheme).
+ * CSS tokens: src/data/themes/nexus.json (via loadTheme).
+ *
+ * Single source for this client's BFF identity + brand copy.
  */
 const nexus: ClientDefinition = {
-  // API identity comes from constants/tenants.ts (Host → clientName/label).
-  // clientName for Nexus org: 1p0248qcm3j1k401
   clientName: "1p0248qcm3j1k401",
   label: "nexus",
   brand: {

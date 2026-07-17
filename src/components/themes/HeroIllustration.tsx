@@ -8,11 +8,11 @@ export function HeroIllustration() {
       aria-hidden
     >
       <defs>
-        <linearGradient id="nexus-panel" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="hero-panel" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#141414" />
           <stop offset="100%" stopColor="#0a0a0a" />
         </linearGradient>
-        <linearGradient id="nexus-block" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="hero-block" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ff4d5a" />
           <stop offset="100%" stopColor="#e11d2e" />
         </linearGradient>
@@ -24,12 +24,12 @@ export function HeroIllustration() {
         width="464"
         height="376"
         rx="32"
-        fill="url(#nexus-panel)"
+        fill="url(#hero-panel)"
         stroke="#2a2a2a"
         strokeWidth="1.5"
       />
 
-      <rect x="64" y="68" width="176" height="176" rx="22" fill="url(#nexus-block)" />
+      <rect x="64" y="68" width="176" height="176" rx="22" fill="url(#hero-block)" />
       <rect x="88" y="118" width="72" height="10" rx="5" fill="#ffffff" opacity="0.9" />
       <rect x="88" y="140" width="112" height="8" rx="4" fill="#ffffff" opacity="0.35" />
       <rect x="88" y="158" width="88" height="8" rx="4" fill="#ffffff" opacity="0.22" />

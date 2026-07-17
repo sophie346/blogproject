@@ -1,34 +1,35 @@
 # Multi-tenant blog (`commonblog`)
 
-Host **+ path prefix** select the site. BFF identity matches ChannelAdmin:
+Host **+ path prefix** select which client module to use. BFF identity matches ChannelAdmin and is defined **only** on the client (`src/clients/<name>.ts`):
 
-| Field | Header | Meaning |
-|-------|--------|---------|
-| `clientName` | `clientname` | Organization |
-| `label` | `label` | Website (one org → many sites) |
+| Field | Header | Where defined |
+|-------|--------|---------------|
+| `clientName` | `clientname` | Client definition |
+| `label` | `label` | Client definition (optional per-mount override) |
 
 Unknown Host/path → **Coming soon**.
 
 ## Current mounts (`src/constants/tenants.ts`)
 
-| URL | Org | Label |
-|-----|-----|-------|
-| `http://localhost:3000/` | `oneauto` | `oneauto` |
-| `http://localhost:3000/blog` | `oneauto` | `oneauto` |
-| `https://onetruckparts.com/blog` | `oneauto` | `oneauto` |
-| `https://nexustruckupgrades.com/blog` | `1p0248qcm3j1k401` | `nexus` |
+Mounts point at a client module — they do not restate `clientName` / `label`.
+
+| URL | Client module |
+|-----|---------------|
+| `http://localhost:3000/` | `oneauto` |
+| `http://localhost:3000/blog` | `oneauto` |
+| `https://onetruckparts.com/blog` | `oneauto` |
+| `https://nexustruckupgrades.com/blog` | `nexus` |
 
 ## Multiple blogs on one domain
 
-Add another row in `SITES` with a different `pathPrefix` + `label`:
+Add another row in `SITE_MOUNTS` with a different `pathPrefix` and optional `label` override:
 
 ```ts
 {
   id: "oneauto-blogs2",
   hosts: ["localhost", "onetruckparts.com", "www.onetruckparts.com"],
   pathPrefix: "/blogs2",
-  themeKey: "oneauto",
-  clientName: "oneauto",
+  client: oneauto,
   label: "second-website-label",
   siteUrl: "https://onetruckparts.com/blogs2",
 },

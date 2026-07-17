@@ -3,7 +3,8 @@ import nexus from "./nexus";
 import oneauto from "./oneauto";
 
 /**
- * UI registry keyed by `themeKey` from `constants/tenants` Host mapping.
+ * Registry of client definitions. Keys match `src/clients/<key>.ts`
+ * and `src/data/themes/<key>.json`. Host mounts reference these modules.
  */
 export const clients: Record<string, ClientDefinition> = {
   oneauto,
