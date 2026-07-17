@@ -11,6 +11,10 @@ const ASSET_PREFIX = "/blog";
 const nextConfig: NextConfig = {
   assetPrefix: ASSET_PREFIX,
   images: {
+    // assetPrefix alone does NOT prefix <Image> optimizer URLs in this Next version.
+    // Custom loader forces /blog/_next/image so LB hits commonblog (not storefront /_next).
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
@@ -35,6 +39,21 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "**.onetruckparts.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "nexustruckupgrades.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.nexustruckupgrades.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.nexustruckupgrades.com",
         pathname: "/**",
       },
       // Featured images often include Unsplash query params — omit `search` so any query is allowed.

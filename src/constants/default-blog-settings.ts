@@ -60,6 +60,7 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
   footerGroups: [],
   social: {},
   categories: [],
+  tags: [],
   authors: [{ slug: "editorial", name: "Editorial" }],
   sections: {
     featured: false,

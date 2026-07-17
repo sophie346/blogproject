@@ -97,6 +97,8 @@ export type TenantConfig = {
   social: SocialLinks;
   /** Static category list for taxonomy routes/sections. */
   categories: Category[];
+  /** Optional curated tag vocabulary from ChannelAdmin. */
+  tags?: Category[];
   /** Known authors; first entry is the default post author. */
   authors: Author[];
   /** Feature toggles for optional home sections. */

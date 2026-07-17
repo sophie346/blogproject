@@ -105,6 +105,7 @@ function mergeSettings(
       : DEFAULT_BLOG_SETTINGS.footerGroups,
     social,
     categories: Array.isArray(src.categories) ? src.categories : [],
+    tags: Array.isArray(src.tags) ? src.tags : [],
     authors,
     sections: {
       featured: Boolean(sections.featured),

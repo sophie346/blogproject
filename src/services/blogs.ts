@@ -153,8 +153,44 @@ export function toListItem(raw: unknown): BlogListItem | null {
     publishedDate,
     updatedDate: asIsoDate(blog.updatedDate),
     status: asString(blog.status) || undefined,
+    categories: normalizeTaxonomyList(blog.categories),
+    tags: normalizeTaxonomyList(blog.tags),
     seo: normalizeSeo(blog.seo),
   };
+}
+
+function normalizeTaxonomyList(raw: unknown): { slug: string; name: string }[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const out: { slug: string; name: string }[] = [];
+  for (const item of raw) {
+    if (typeof item === "string") {
+      const name = item.trim();
+      const slug = name
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+      if (!slug || seen.has(slug)) continue;
+      seen.add(slug);
+      out.push({ slug, name });
+      continue;
+    }
+    const rec = asRecord(item);
+    if (!rec) continue;
+    const name = asString(rec.name || rec.label || rec.value);
+    const slug = asString(rec.slug || name)
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+    if (!slug || !name || seen.has(slug)) continue;
+    seen.add(slug);
+    out.push({ slug, name });
+  }
+  return out;
 }
 
 /** Map one BFF detail payload (`serializeBlogDetail`) into UI-ready shape. */
@@ -258,13 +294,19 @@ async function missingConfig(): Promise<BlogConfigError | null> {
 }
 
 /** Published blog list for the active tenant. */
-export async function getBlogs(page = 1, limit = 12): Promise<BlogListResult> {
+export async function getBlogs(
+  page = 1,
+  limit = 12,
+  filters?: { category?: string; tag?: string }
+): Promise<BlogListResult> {
   const configError = await missingConfig();
   if (configError) return configError;
 
   const result = await bffGet<BlogListResponse>("/prod/blogs", {
     page,
     limit,
+    ...(filters?.category ? { category: filters.category } : {}),
+    ...(filters?.tag ? { tag: filters.tag } : {}),
   });
   if (!result.ok) {
     return {

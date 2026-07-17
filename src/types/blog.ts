@@ -1,3 +1,5 @@
+import type { TaxonomyItem } from "@/types/taxonomy";
+
 export type BlogSeoSummary = {
   title: string;
   description: string;
@@ -19,6 +21,8 @@ export type BlogListItem = {
   publishedDate: string | null;
   updatedDate: string | null;
   status?: string;
+  categories: TaxonomyItem[];
+  tags: TaxonomyItem[];
   seo: BlogSeoSummary;
 };
 

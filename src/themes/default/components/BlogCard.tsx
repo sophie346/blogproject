@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatBlogDate } from "@/services/blogs";
 import { resolvePostImage } from "@/lib/images";
-import { absoluteUrl, parseKeywords, resolveBlogSeo } from "@/lib/seo";
+import { absoluteUrl, resolveBlogSeo } from "@/lib/seo";
 import { siteHref } from "@/lib/paths";
 import type { BlogCardProps } from "@/themes/types";
 import type { BlogListItem } from "@/types/blog";
 
 function resolveCategory(post: BlogListItem): string {
-  const keywords = parseKeywords(post.seo?.metaKeywords);
-  if (keywords[0]) return keywords[0];
+  if (post.categories?.[0]?.name) return post.categories[0].name;
+  if (post.tags?.[0]?.name) return post.tags[0].name;
   return "Stories";
 }
 

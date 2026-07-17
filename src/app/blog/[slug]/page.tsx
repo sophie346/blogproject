@@ -93,7 +93,25 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
   const dateIso = toIsoDate(post.publishedDate || post.updatedDate);
   const imageUrl = resolvePostImage(post) || seo.image;
   const readingMinutes = estimateReadingTime(post.content || post.excerpt);
-  const keywords = parseKeywords(post.seo?.metaKeywords);
+  const categories = Array.isArray(post.categories) ? post.categories : [];
+  const tags = Array.isArray(post.tags) ? post.tags : [];
+  const topicChips = await Promise.all([
+    ...categories.map(async (c) => ({
+      kind: "category" as const,
+      slug: c.slug,
+      name: c.name,
+      href: await siteHref(`/category/${c.slug}`),
+    })),
+    ...tags.map(async (t) => ({
+      kind: "tag" as const,
+      slug: t.slug,
+      name: t.name,
+      href: await siteHref(`/tag/${t.slug}`),
+    })),
+  ]);
+  // Fallback to SEO keywords only when no real taxonomy is set
+  const keywordFallback =
+    topicChips.length === 0 ? parseKeywords(post.seo?.metaKeywords) : [];
   const related = await getRelatedBlogs(post.slug, 3);
   const shareUrl = await absoluteUrl(`/blog/${post.slug}`);
   const homeHref = await siteHref("/");
@@ -217,9 +235,19 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
       </header>
 
       <div className="mx-auto w-full max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
-        {keywords.length ? (
+        {topicChips.length || keywordFallback.length ? (
           <ul className="mb-10 flex flex-wrap gap-2" aria-label="Topics">
-            {keywords.map((keyword) => (
+            {topicChips.map((chip) => (
+              <li key={`${chip.kind}-${chip.slug}`}>
+                <Link
+                  href={chip.href}
+                  className="border border-line/80 px-3 py-1 font-display text-xs uppercase tracking-[0.14em] text-fog-muted transition-colors hover:border-amber hover:text-amber-soft"
+                >
+                  {chip.name}
+                </Link>
+              </li>
+            ))}
+            {keywordFallback.map((keyword) => (
               <li
                 key={keyword}
                 className="border border-line/80 px-3 py-1 font-display text-xs uppercase tracking-[0.14em] text-fog-muted"

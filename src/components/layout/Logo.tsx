@@ -22,9 +22,9 @@ export async function Logo({ href, className }: LogoProps) {
         <Image
           src={brand.logo}
           alt={brand.name}
-          width={120}
-          height={32}
-          className="site-logo__image h-8 w-auto object-contain"
+          width={200}
+          height={48}
+          className="site-logo__image h-10 w-auto max-w-[220px] object-contain"
           priority
         />
       ) : (
