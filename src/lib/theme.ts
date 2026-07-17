@@ -12,6 +12,16 @@ const TOKEN_TO_VAR: Record<keyof ThemeTokens, string> = {
   fogMuted: "--fog-muted",
   line: "--line",
   glow: "--glow",
+  headerBg: "--header-bg",
+  headerFg: "--header-fg",
+  headerMuted: "--header-muted",
+  headerBorder: "--header-border",
+  footerBg: "--footer-bg",
+  footerFg: "--footer-fg",
+  footerMuted: "--footer-muted",
+  footerBorder: "--footer-border",
+  ctaBg: "--cta-bg",
+  ctaFg: "--cta-fg",
 };
 
 /**

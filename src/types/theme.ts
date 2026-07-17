@@ -13,6 +13,17 @@ export type ThemeTokens = {
   fogMuted?: string;
   line?: string;
   glow?: string;
+  /** Header / footer chrome — same layout, different brand colors via DB. */
+  headerBg?: string;
+  headerFg?: string;
+  headerMuted?: string;
+  headerBorder?: string;
+  footerBg?: string;
+  footerFg?: string;
+  footerMuted?: string;
+  footerBorder?: string;
+  ctaBg?: string;
+  ctaFg?: string;
 };
 
 export type ThemeConfig = {

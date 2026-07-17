@@ -59,6 +59,12 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
   nav: [{ label: "Stories", href: "/#stories" }],
   footerGroups: [],
   social: {},
+  footerContact: {
+    addressLines: [],
+    email: "",
+    phone: "",
+    hours: [],
+  },
   categories: [],
   tags: [],
   authors: [{ slug: "editorial", name: "Editorial" }],

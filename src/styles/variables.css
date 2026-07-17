@@ -13,6 +13,17 @@
   --fog-muted: #9aa8b8;
   --line: rgba(215, 222, 232, 0.12);
   --glow: rgba(111, 143, 173, 0.22);
+  /* Chrome defaults (overridden per site via theme.tokens in DB) */
+  --header-bg: color-mix(in srgb, var(--ink) 85%, transparent);
+  --header-fg: var(--fog);
+  --header-muted: var(--fog-muted);
+  --header-border: var(--line);
+  --footer-bg: color-mix(in srgb, var(--ink) 60%, transparent);
+  --footer-fg: var(--fog);
+  --footer-muted: var(--fog-muted);
+  --footer-border: var(--line);
+  --cta-bg: color-mix(in srgb, var(--amber) 25%, transparent);
+  --cta-fg: var(--amber-soft);
   --background: var(--ink);
   --foreground: var(--fog);
 }

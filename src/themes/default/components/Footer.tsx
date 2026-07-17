@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
+import { siteHref } from "@/lib/paths";
 import { getTenant } from "@/lib/tenant";
 
 const SOCIAL_LABELS: Record<string, string> = {
@@ -10,11 +11,43 @@ const SOCIAL_LABELS: Record<string, string> = {
   linkedin: "LinkedIn",
 };
 
-/** Default theme footer — other themes omit Footer to inherit this. */
+async function resolveFooterHref(href: string): Promise<string> {
+  const raw = String(href || "").trim();
+  if (!raw) return "/";
+  if (raw.startsWith("http://") || raw.startsWith("https://") || raw.startsWith("mailto:") || raw.startsWith("tel:")) {
+    return raw;
+  }
+  return siteHref(raw);
+}
+
+/** Shared footer — contact + link columns; colors from theme.tokens. */
 export default async function Footer() {
-  const { brand, copy, footerGroups, social } = await getTenant();
+  const { brand, copy, footerGroups, footerContact, social } = await getTenant();
   const socialEntries = Object.entries(social).filter(([, url]) => Boolean(url));
   const year = new Date().getFullYear();
+
+  const addressLines = (footerContact?.addressLines || [])
+    .map((l) => String(l || "").trim())
+    .filter(Boolean);
+  const hours = (footerContact?.hours || [])
+    .map((l) => String(l || "").trim())
+    .filter(Boolean);
+  const email = String(footerContact?.email || "").trim();
+  const phone = String(footerContact?.phone || "").trim();
+  const hasContact =
+    addressLines.length > 0 || Boolean(email) || Boolean(phone) || hours.length > 0;
+
+  const resolvedGroups = await Promise.all(
+    (footerGroups || []).map(async (group) => ({
+      title: group.title,
+      links: await Promise.all(
+        (group.links || []).map(async (link) => ({
+          ...link,
+          href: await resolveFooterHref(link.href),
+        }))
+      ),
+    }))
+  );
 
   return (
     <footer className="site-footer theme-footer">
@@ -22,7 +55,48 @@ export default async function Footer() {
         <div className="site-footer__top">
           <div className="site-footer__brand">
             <Logo />
-            <p className="site-footer__tagline">{copy.footerTagline}</p>
+            {copy.footerTagline ? (
+              <p className="site-footer__tagline">{copy.footerTagline}</p>
+            ) : null}
+
+            {hasContact ? (
+              <div className="site-footer__contact">
+                {addressLines.length ? (
+                  <p className="site-footer__contact-block">
+                    {addressLines.map((line) => (
+                      <span key={line} className="site-footer__contact-line">
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
+                {email ? (
+                  <p className="site-footer__contact-line">
+                    Email:{" "}
+                    <a href={`mailto:${email}`} className="site-footer__link">
+                      {email}
+                    </a>
+                  </p>
+                ) : null}
+                {phone ? (
+                  <p className="site-footer__contact-line">
+                    Phone:{" "}
+                    <a
+                      href={`tel:${phone.replace(/[^\d+]/g, "")}`}
+                      className="site-footer__link"
+                    >
+                      {phone}
+                    </a>
+                  </p>
+                ) : null}
+                {hours.map((line) => (
+                  <p key={line} className="site-footer__contact-line">
+                    {line}
+                  </p>
+                ))}
+              </div>
+            ) : null}
+
             {socialEntries.length ? (
               <ul className="site-footer__social">
                 {socialEntries.map(([key, url]) => (
@@ -41,17 +115,30 @@ export default async function Footer() {
             ) : null}
           </div>
 
-          {footerGroups.length ? (
+          {resolvedGroups.length ? (
             <div className="site-footer__groups">
-              {footerGroups.map((group) => (
-                <div key={group.title} className="site-footer__group">
-                  <p className="site-footer__group-title">{group.title}</p>
+              {resolvedGroups.map((group, groupIndex) => (
+                <div
+                  key={group.title || `footer-group-${groupIndex}`}
+                  className="site-footer__group"
+                >
+                  {group.title ? (
+                    <p className="site-footer__group-title">{group.title}</p>
+                  ) : null}
                   <ul className="site-footer__group-links">
                     {group.links.map((link) => (
                       <li key={`${link.label}:${link.href}`}>
-                        <Link href={link.href} className="site-footer__link">
-                          {link.label}
-                        </Link>
+                        {link.href.startsWith("http") ||
+                        link.href.startsWith("mailto:") ||
+                        link.href.startsWith("tel:") ? (
+                          <a href={link.href} className="site-footer__link">
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link href={link.href} className="site-footer__link">
+                            {link.label}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -64,8 +151,9 @@ export default async function Footer() {
         <div className="site-footer__bottom">
           <p>
             © {year} {brand.name}
+            {brand.alternateName ? ` · ${brand.alternateName}` : ""}
           </p>
-          <p>{brand.tagline}</p>
+          <p>{brand.tagline || "Powered By OneChannelAdmin"}</p>
         </div>
       </div>
     </footer>

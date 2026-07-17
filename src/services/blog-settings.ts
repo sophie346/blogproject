@@ -103,6 +103,28 @@ function mergeSettings(
     footerGroups: Array.isArray(src.footerGroups)
       ? src.footerGroups
       : DEFAULT_BLOG_SETTINGS.footerGroups,
+    footerContact: {
+      ...(DEFAULT_BLOG_SETTINGS.footerContact || {}),
+      ...((src as { footerContact?: Record<string, unknown> }).footerContact ||
+        {}),
+      addressLines: Array.isArray(
+        (src as { footerContact?: { addressLines?: unknown } }).footerContact
+          ?.addressLines
+      )
+        ? (
+            (src as { footerContact?: { addressLines?: string[] } })
+              .footerContact?.addressLines || []
+          ).map(String)
+        : DEFAULT_BLOG_SETTINGS.footerContact?.addressLines || [],
+      hours: Array.isArray(
+        (src as { footerContact?: { hours?: unknown } }).footerContact?.hours
+      )
+        ? (
+            (src as { footerContact?: { hours?: string[] } }).footerContact
+              ?.hours || []
+          ).map(String)
+        : DEFAULT_BLOG_SETTINGS.footerContact?.hours || [],
+    },
     social,
     categories: Array.isArray(src.categories) ? src.categories : [],
     tags: Array.isArray(src.tags) ? src.tags : [],

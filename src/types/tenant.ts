@@ -11,6 +11,14 @@ export type FooterLinkGroup = {
   links: NavLink[];
 };
 
+/** Storefront-style contact column (Nexus / ODB / OPH). */
+export type FooterContact = {
+  addressLines?: string[];
+  email?: string;
+  phone?: string;
+  hours?: string[];
+};
+
 export type SocialLinks = {
   facebook?: string;
   instagram?: string;
@@ -94,6 +102,7 @@ export type TenantConfig = {
   pageSeo?: TenantPageSeo;
   nav: NavLink[];
   footerGroups: FooterLinkGroup[];
+  footerContact?: FooterContact;
   social: SocialLinks;
   /** Static category list for taxonomy routes/sections. */
   categories: Category[];
