@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Source_Serif_4, Syne } from "next/font/google";
 import { ComingSoon } from "@/components/ComingSoon";
 import { ThemeCustomCss } from "@/components/ThemeCustomCss";
+import { ThemeGoogleFonts } from "@/components/ThemeGoogleFonts";
 import { ThemeFooter } from "@/components/themed/ThemeFooter";
 import { ThemeHeader } from "@/components/themed/ThemeHeader";
 import { getSiteConfig } from "@/lib/config";
@@ -130,6 +131,7 @@ export default async function RootLayout({
       style={themeStyle}
       suppressHydrationWarning
     >
+      <ThemeGoogleFonts googleFonts={tenant.theme.tokens?.googleFonts} />
       <body className="min-h-full" suppressHydrationWarning>
         <ThemeCustomCss css={customCss} />
         <div className="site-shell flex min-h-full flex-col">

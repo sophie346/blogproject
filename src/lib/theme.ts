@@ -1,7 +1,11 @@
 import type { CSSProperties } from "react";
+import {
+  fontStackFromFamily,
+  parseGoogleFontFamilies,
+} from "@/lib/fonts";
 import type { ThemeTokens } from "@/types/theme";
 
-const TOKEN_TO_VAR: Record<keyof ThemeTokens, string> = {
+const TOKEN_TO_VAR: Partial<Record<keyof ThemeTokens, string>> = {
   ink: "--ink",
   inkSoft: "--ink-soft",
   steel: "--steel",
@@ -22,6 +26,9 @@ const TOKEN_TO_VAR: Record<keyof ThemeTokens, string> = {
   footerBorder: "--footer-border",
   ctaBg: "--cta-bg",
   ctaFg: "--cta-fg",
+  fontDisplay: "--font-display",
+  fontSans: "--font-sans",
+  fontSerif: "--font-serif",
 };
 
 /**
@@ -34,9 +41,22 @@ export function themeTokensToStyle(
   if (!tokens) return {};
   const style: Record<string, string> = {};
   for (const [key, value] of Object.entries(tokens)) {
-    if (!value) continue;
+    if (!value || key === "googleFonts") continue;
     const cssVar = TOKEN_TO_VAR[key as keyof ThemeTokens];
     if (cssVar) style[cssVar] = value;
   }
+
+  // If googleFonts is set but stacks are omitted, derive display/sans from
+  // the first family so storefront fonts apply without extra fields.
+  const families = parseGoogleFontFamilies(tokens.googleFonts);
+  if (families[0]) {
+    const stack = fontStackFromFamily(families[0]);
+    if (!style["--font-display"]) style["--font-display"] = stack;
+    if (!style["--font-sans"]) style["--font-sans"] = stack;
+    if (families[1] && !style["--font-serif"]) {
+      style["--font-serif"] = fontStackFromFamily(families[1]);
+    }
+  }
+
   return style as CSSProperties;
 }

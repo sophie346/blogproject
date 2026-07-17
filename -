@@ -1,0 +1,282 @@
+defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendBuckets/hybrid-lb-placeholder-backend
+fingerprint: fm5BUTBbsLk=
+hostRules:
+- hosts:
+  - www.onedirectbuy.com
+  pathMatcher: custom-www-onedirectbuy-com
+- hosts:
+  - devadmin.onechanneladmin.com
+  pathMatcher: gke-dev-onechanneladminui
+- hosts:
+  - rangolikitchener.ca
+  pathMatcher: gke-rangolicanada
+- hosts:
+  - admin.onechanneladmin.com
+  pathMatcher: gke-onechanneladminui
+- hosts:
+  - aichatbackend.onechanneladmin.com
+  pathMatcher: gke-aichatassistant-backend
+- hosts:
+  - rangolibrantford.ca
+  pathMatcher: gke-rangolicanada
+- hosts:
+  - backend.oneteledoc.com
+  pathMatcher: gke-oneteledoc-backend
+- hosts:
+  - dev.onechanneladmin.com
+  pathMatcher: custom-dev-onechanneladmin-com
+- hosts:
+  - backend.oneauto.us
+  pathMatcher: gke-oneautobackend
+- hosts:
+  - theparadise.onechanneladmin.com
+  pathMatcher: gke-paradise
+- hosts:
+  - onedirectbuy.onechanneladmin.com
+  pathMatcher: gke-onedirectbuy-admin
+- hosts:
+  - www.nexustruckupgrades.com
+  pathMatcher: custom-www-nexustruckupgrades-com
+- hosts:
+  - headlightplus.onechanneladmin.com
+  pathMatcher: gke-headlightplus
+- hosts:
+  - falconestints.com
+  pathMatcher: gke-falcones
+- hosts:
+  - rangolicanada.onechanneladmin.com
+  pathMatcher: gke-rangolicanada
+- hosts:
+  - rfid.onechanneladmin.com
+  pathMatcher: gke-rfidpos
+- hosts:
+  - www.onetruckparts.com
+  pathMatcher: custom-www-onetruckparts-com
+- hosts:
+  - dev.oneauto.us
+  pathMatcher: gke-dev-oneautobackend
+- hosts:
+  - oneproducthub.com
+  pathMatcher: custom-oneproducthub-com
+- hosts:
+  - admin.onechanneladmin.services
+  pathMatcher: gke-onechanneladminui
+- hosts:
+  - onedirectbuy.com
+  pathMatcher: custom-onedirectbuy-com
+- hosts:
+  - oneteledoc.com
+  pathMatcher: gke-oneteledoc-frontend
+- hosts:
+  - www.onefulfillcenter.com
+  pathMatcher: vm
+- hosts:
+  - backend.onechanneladmin.com
+  pathMatcher: custom-backend-onechanneladmin-com
+- hosts:
+  - oneproducthub-backend.onechanneladmin.com
+  pathMatcher: gke-oneproducthub-backend
+- hosts:
+  - aichat.onechanneladmin.com
+  pathMatcher: gke-aichatassistant-frontend
+- hosts:
+  - www.onechanneladmin.com
+  pathMatcher: custom-www-onechanneladmin-com
+- hosts:
+  - www.oneproducthub.com
+  pathMatcher: custom-www-oneproducthub-com
+- hosts:
+  - www.falconestints.com
+  pathMatcher: gke-falcones
+- hosts:
+  - dev.onedirectbuy.com
+  pathMatcher: gke-onedirectbuy-backend
+- hosts:
+  - nexustruckupgrades.com
+  pathMatcher: custom-nexustruckupgrades-com
+- hosts:
+  - onefulfillcenter.com
+  pathMatcher: vm
+- hosts:
+  - onechanneladmin.com
+  pathMatcher: custom-onechanneladmin-com
+- hosts:
+  - onetruckparts.com
+  pathMatcher: custom-onetruckparts-com
+- hosts:
+  - pos.onechanneladmin.com
+  pathMatcher: gke-rfidpos
+name: hybrid-lb-urlmap
+pathMatchers:
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+  name: vm
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-queueworkload-backend
+  name: custom-backend-onechanneladmin-com
+  pathRules:
+  - paths:
+    - /inventory/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-inventory-backend
+  - paths:
+    - /marketplace/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-marketplace-backend
+  - paths:
+    - /queueworkload/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-queueworkload-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-dev-inventory-backend
+  name: custom-dev-onechanneladmin-com
+  pathRules:
+  - paths:
+    - /inventory/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-dev-inventory-backend
+  - paths:
+    - /marketplace/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-dev-marketplace-backend
+  - paths:
+    - /queueworkload/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-dev-queueworkload-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-nexus-backend
+  name: custom-nexustruckupgrades-com
+  pathRules:
+  - paths:
+    - /blogstemp/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blogstemp
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog/_next/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog/_next
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+  name: custom-onechanneladmin-com
+  pathRules:
+  - paths:
+    - /newhomepage/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-newonechanneladminhomepage-backend
+  - paths:
+    - /newhomepage
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-newonechanneladminhomepage-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-onedirectbuy-ui-backend
+  name: custom-onedirectbuy-com
+  pathRules:
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneproducthub-frontend-backend
+  name: custom-oneproducthub-com
+  pathRules:
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneautored-backend
+  name: custom-onetruckparts-com
+  pathRules:
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-nexus-backend
+  name: custom-www-nexustruckupgrades-com
+  pathRules:
+  - paths:
+    - /blogstemp/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blogstemp
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog/_next/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog/_next
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-vm-backend
+  name: custom-www-onechanneladmin-com
+  pathRules:
+  - paths:
+    - /newhomepage/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-newonechanneladminhomepage-backend
+  - paths:
+    - /newhomepage
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-newonechanneladminhomepage-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-onedirectbuy-ui-backend
+  name: custom-www-onedirectbuy-com
+  pathRules:
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneproducthub-frontend-backend
+  name: custom-www-oneproducthub-com
+  pathRules:
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneautored-backend
+  name: custom-www-onetruckparts-com
+  pathRules:
+  - paths:
+    - /blog/*
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+  - paths:
+    - /blog
+    service: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-commonblog-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-aichatassistant-backend-backend
+  name: gke-aichatassistant-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-aichatassistant-frontend-backend
+  name: gke-aichatassistant-frontend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-dev-oneautobackend-backend
+  name: gke-dev-oneautobackend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-dev-onechanneladminui-backend
+  name: gke-dev-onechanneladminui
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-falcones-backend
+  name: gke-falcones
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-headlightplus-backend
+  name: gke-headlightplus
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneautobackend-backend
+  name: gke-oneautobackend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-onechanneladminui-backend
+  name: gke-onechanneladminui
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-onedirectbuy-admin-backend
+  name: gke-onedirectbuy-admin
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-onedirectbuy-backend-backend
+  name: gke-onedirectbuy-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneproducthub-backend-backend
+  name: gke-oneproducthub-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneteledoc-backend-backend
+  name: gke-oneteledoc-backend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-oneteledoc-frontend-backend
+  name: gke-oneteledoc-frontend
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-paradise-backend
+  name: gke-paradise
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-rangolicanada-backend
+  name: gke-rangolicanada
+- defaultService: https://www.googleapis.com/compute/v1/projects/gentle-epoch-277301/global/backendServices/hybrid-lb-gke-rfidpos-backend
+  name: gke-rfidpos

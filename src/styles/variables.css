@@ -40,7 +40,8 @@
   --color-fog: var(--fog);
   --color-fog-muted: var(--fog-muted);
   --color-line: var(--line);
-  --font-display: var(--font-syne);
-  --font-serif: var(--font-source-serif);
-  --font-sans: var(--font-syne);
+  /* Overridable via theme.tokens.fontDisplay / fontSans / googleFonts */
+  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
 }

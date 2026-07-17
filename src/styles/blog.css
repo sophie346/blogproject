@@ -121,7 +121,7 @@
 .article-body h2,
 .article-body h3,
 .article-body h4 {
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
   color: var(--fog);
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -263,7 +263,7 @@
 }
 
 .site-footer__group-title {
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.16em;
@@ -297,7 +297,7 @@
   flex-direction: column;
   gap: 0.5rem;
   padding-top: 2rem;
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: 0.8rem;
   color: var(--footer-muted);
 }
@@ -328,7 +328,7 @@
   border-radius: 999px;
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--ink-soft) 80%, transparent);
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--steel-bright);
@@ -353,7 +353,7 @@
   display: flex;
   align-items: baseline;
   gap: 0.35rem;
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
 }
 
 .pagination__page {
@@ -418,7 +418,7 @@
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--amber) 55%, transparent);
   background: color-mix(in srgb, var(--amber) 15%, transparent);
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--amber-soft);
@@ -438,7 +438,7 @@
   border-radius: 999px;
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--ink-soft) 70%, transparent);
-  font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--fog);

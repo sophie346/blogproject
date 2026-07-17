@@ -24,6 +24,15 @@ export type ThemeTokens = {
   footerBorder?: string;
   ctaBg?: string;
   ctaFg?: string;
+  /**
+   * Comma-separated Google Font family names to load
+   * (e.g. "Roboto" or "Work Sans, Libre Baskerville").
+   */
+  googleFonts?: string;
+  /** CSS font-family for UI / headings (overrides --font-display / --font-sans). */
+  fontDisplay?: string;
+  fontSans?: string;
+  fontSerif?: string;
 };
 
 export type ThemeConfig = {

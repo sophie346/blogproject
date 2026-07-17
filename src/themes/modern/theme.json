@@ -20,6 +20,7 @@
     "footerMuted": "#888888",
     "footerBorder": "rgba(255, 255, 255, 0.12)",
     "ctaBg": "#e11d2e",
-    "ctaFg": "#ffffff"
+    "ctaFg": "#ffffff",
+    "googleFonts": "Roboto"
   }
 }
