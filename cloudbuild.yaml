@@ -44,7 +44,12 @@ steps:
           --project="${PROJECT_ID}"
         kubectl rollout restart deployment "${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}"
         # NEG / LB readiness can take several minutes after the container is Ready.
-        kubectl rollout status "deployment/${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}" --timeout=600s
+        if ! kubectl rollout status "deployment/${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}" --timeout=600s; then
+          echo "WARNING: rollout status timed out; checking pods (image may still be live)"
+          kubectl get pods -l "app=${_DEPLOYMENT}" -o wide || true
+          kubectl describe deploy "${_DEPLOYMENT}" -n "${_K8S_NAMESPACE}" | tail -40 || true
+          exit 1
+        fi
 
 options:
   logging: CLOUD_LOGGING_ONLY
