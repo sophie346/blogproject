@@ -27,13 +27,25 @@ import {
 
 type BlogPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ preview?: string | string[] }>;
 };
+
+async function resolvePreviewToken(
+  searchParams?: Promise<{ preview?: string | string[] }>
+) {
+  const sp = searchParams ? await searchParams : undefined;
+  const raw = sp?.preview;
+  if (Array.isArray(raw)) return String(raw[0] || "").trim();
+  return String(raw || "").trim();
+}
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getBlogBySlug(slug);
+  const preview = await resolvePreviewToken(searchParams);
+  const result = await getBlogBySlug(slug, { preview });
 
   if (!result.ok) {
     return {
@@ -42,12 +54,20 @@ export async function generateMetadata({
     };
   }
 
-  return await buildArticleMetadata(result.data);
+  const metadata = await buildArticleMetadata(result.data);
+  if (String(result.data.status || "").toLowerCase() !== "published") {
+    return {
+      ...metadata,
+      robots: { index: false, follow: false },
+    };
+  }
+  return metadata;
 }
 
-export default async function BlogPage({ params }: BlogPageProps) {
+export default async function BlogPage({ params, searchParams }: BlogPageProps) {
   const { slug } = await params;
-  const result = await getBlogBySlug(slug);
+  const preview = await resolvePreviewToken(searchParams);
+  const result = await getBlogBySlug(slug, { preview });
   const siteConfig = await getSiteConfig();
 
   if (!result.ok) {
@@ -83,8 +103,20 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const homeHref = await siteHref("/");
   const storiesHref = await siteHref("/#stories");
 
+  const isPreview = String(post.status || "").toLowerCase() !== "published";
+
   return (
     <article itemScope itemType="https://schema.org/Article">
+      {isPreview ? (
+        <div
+          role="status"
+          className="border-b border-amber/40 bg-amber/15 px-5 py-3 text-center font-display text-sm text-amber-soft sm:px-8"
+        >
+          Preview — this post is not live
+          {post.status ? ` (${post.status})` : ""}. Visitors without this link
+          cannot see it.
+        </div>
+      ) : null}
       <JsonLd data={await buildArticleJsonLd(post)} />
       <meta itemProp="headline" content={post.title} />
       {seo.description ? (

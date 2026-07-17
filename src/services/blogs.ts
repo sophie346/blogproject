@@ -322,7 +322,10 @@ export async function getBlogs(page = 1, limit = 12): Promise<BlogListResult> {
 }
 
 /** Published blog detail by slug for the active tenant. */
-export async function getBlogBySlug(slug: string): Promise<BlogDetailResult> {
+export async function getBlogBySlug(
+  slug: string,
+  options?: { preview?: string | null }
+): Promise<BlogDetailResult> {
   const configError = await missingConfig();
   if (configError) {
     return {
@@ -333,7 +336,10 @@ export async function getBlogBySlug(slug: string): Promise<BlogDetailResult> {
   }
 
   const safeSlug = encodeURIComponent(slug.trim().toLowerCase());
-  const result = await bffGet<BlogDetailResponse>(`/prod/blogs/${safeSlug}`);
+  const preview = String(options?.preview ?? "").trim();
+  const result = await bffGet<BlogDetailResponse>(`/prod/blogs/${safeSlug}`, {
+    ...(preview ? { preview } : {}),
+  });
   if (!result.ok) {
     return {
       ok: false,
