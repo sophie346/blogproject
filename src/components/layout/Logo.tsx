@@ -1,0 +1,43 @@
+import Image from "next/image";
+import Link from "next/link";
+import { getTenant } from "@/lib/tenant";
+
+type LogoProps = {
+  href?: string;
+  className?: string;
+};
+
+export function Logo({ href = "/", className }: LogoProps) {
+  const { brand } = getTenant();
+  const initial = (brand.name || "N").charAt(0).toUpperCase();
+
+  return (
+    <Link
+      href={href}
+      className={`site-logo inline-flex shrink-0 items-center gap-2.5 ${className || ""}`.trim()}
+    >
+      {brand.logo ? (
+        <Image
+          src={brand.logo}
+          alt={brand.name}
+          width={120}
+          height={32}
+          className="site-logo__image h-8 w-auto object-contain"
+          priority
+        />
+      ) : (
+        <>
+          <span
+            className="site-logo__mark inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber font-display text-sm font-extrabold tracking-tight text-white"
+            aria-hidden
+          >
+            {initial}
+          </span>
+          <span className="site-logo__text font-display text-lg font-bold tracking-tight text-fog transition-colors hover:text-amber-soft">
+            {brand.name}
+          </span>
+        </>
+      )}
+    </Link>
+  );
+}
