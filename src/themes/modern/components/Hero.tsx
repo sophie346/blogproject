@@ -1,7 +1,8 @@
-import type { HeroProps } from "./hero-types";
+import type { HeroProps } from "@/themes/types";
 import { HeroIllustration } from "./HeroIllustration";
 
-export function ModernHero({
+/** Modern split hero with illustration — overrides default Hero. */
+export default function Hero({
   brandName,
   eyebrow,
   title,

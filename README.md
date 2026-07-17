@@ -9,6 +9,7 @@ ChannelAdmin → **Blogs → Settings**.
 | `clientName` | `clientname` | `tenants.ts` mount |
 | `label` | `label` | `tenants.ts` mount |
 | brand / copy / theme | — | Admin blog settings API |
+| theme UI | — | `src/themes/<id>/` (WordPress-style overrides) |
 
 Unknown Host/path → **Coming soon**.
 
@@ -20,6 +21,8 @@ Unknown Host/path → **Coming soon**.
 | `http://localhost:3000/blog` | `oneauto` | `oneauto` |
 | `https://onetruckparts.com/blog` | `oneauto` | `oneauto` |
 | `https://nexustruckupgrades.com/blog` | `1p0248qcm3j1k401` | `nexus` |
+| `https://onedirectbuy.com/blog` | `3at1mrm65w3g` | `onedirectbuy` |
+| `https://oneproducthub.com/blog` | `3at1mrm65w3g` | `oneproducthub` |
 
 ## Admin
 

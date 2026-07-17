@@ -1,3 +1,5 @@
+import { stripInlinePresentation } from "@/lib/sanitize-html";
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -8,14 +10,12 @@ function escapeHtml(value: string) {
 }
 
 function stripDangerousHtml(html: string) {
-  return html
+  return stripInlinePresentation(html)
     .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
-    .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "")
-    .replace(/\son\w+=(["']).*?\1/gi, "")
-    .replace(/\son\w+=([^\s>]+)/gi, "");
+    .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "");
 }
 
-/** Turn CMS HTML or plain text into safe article markup. */
+/** Turn CMS HTML or plain text into safe article markup (no inline style/class). */
 export function toArticleHtml(content: string) {
   const trimmed = String(content ?? "").trim();
   if (!trimmed) return "";

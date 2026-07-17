@@ -105,6 +105,11 @@ function mergeSettings(
     theme: {
       id: themeId,
       tokens: themeTokens,
+      customCss: String(
+        (src.theme && typeof src.theme === "object"
+          ? (src.theme as { customCss?: string }).customCss
+          : "") || ""
+      ),
     },
   };
 }

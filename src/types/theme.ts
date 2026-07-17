@@ -18,4 +18,6 @@ export type ThemeTokens = {
 export type ThemeConfig = {
   id: ThemeId;
   tokens?: ThemeTokens;
+  /** Site-level CSS overrides from ChannelAdmin (sanitized before inject). */
+  customCss?: string;
 };

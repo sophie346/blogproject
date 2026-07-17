@@ -1,0 +1,15 @@
+{
+  "id": "luxury",
+  "tokens": {
+    "ink": "#0a0908",
+    "inkSoft": "#161310",
+    "steel": "#a89880",
+    "steelBright": "#d4c4a8",
+    "amber": "#c9a227",
+    "amberSoft": "#e4c76b",
+    "fog": "#f5f0e6",
+    "fogMuted": "#b8a990",
+    "line": "rgba(245, 240, 230, 0.12)",
+    "glow": "rgba(201, 162, 39, 0.28)"
+  }
+}

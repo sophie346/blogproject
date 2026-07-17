@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Source_Serif_4, Syne } from "next/font/google";
 import { ComingSoon } from "@/components/ComingSoon";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { ThemeCustomCss } from "@/components/ThemeCustomCss";
+import { ThemeFooter } from "@/components/themed/ThemeFooter";
+import { ThemeHeader } from "@/components/themed/ThemeHeader";
 import { getSiteConfig } from "@/lib/config";
 import { getTenantOrNull } from "@/lib/tenant";
 import { themeTokensToStyle } from "@/lib/theme";
 import { absoluteUrl, getDefaultOgImage, getSiteUrl } from "@/lib/seo";
+import { sanitizeCustomCss } from "@/lib/sanitize-html";
 import "./globals.css";
 
 const syne = Syne({
@@ -119,6 +121,7 @@ export default async function RootLayout({
 
   const siteConfig = await getSiteConfig();
   const themeStyle = themeTokensToStyle(tenant.theme.tokens);
+  const customCss = sanitizeCustomCss(tenant.theme.customCss);
 
   return (
     <html
@@ -128,10 +131,11 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full" suppressHydrationWarning>
+        <ThemeCustomCss css={customCss} />
         <div className="site-shell flex min-h-full flex-col">
-          <SiteHeader />
+          <ThemeHeader />
           <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <ThemeFooter />
         </div>
       </body>
     </html>

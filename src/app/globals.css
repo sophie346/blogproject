@@ -2,3 +2,8 @@
 @import "../styles/variables.css";
 @import "../styles/base.css";
 @import "../styles/blog.css";
+
+/* Theme packages (WordPress-style) — scoped under .theme-<id> on <html> */
+@import "../themes/default/styles.css";
+@import "../themes/modern/styles.css";
+@import "../themes/luxury/styles.css";

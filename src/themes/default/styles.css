@@ -1,0 +1,8 @@
+/* Default theme — base chrome tweaks scoped to .theme-default */
+.theme-default .theme-header {
+  /* inherits global sticky header styles */
+}
+
+.theme-default .hero-section--default .hero-eyebrow {
+  letter-spacing: 0.18em;
+}

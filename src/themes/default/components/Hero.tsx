@@ -1,6 +1,7 @@
-import type { HeroProps } from "./hero-types";
+import type { HeroProps } from "@/themes/types";
 
-export function DefaultHero({
+/** Default full-bleed editorial hero. */
+export default function Hero({
   brandName,
   eyebrow,
   title,

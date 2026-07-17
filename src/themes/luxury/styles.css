@@ -1,0 +1,20 @@
+/* Luxury theme overrides */
+.theme-luxury .hero-luxury__brand {
+  letter-spacing: 0.4em;
+}
+
+.theme-luxury .hero-luxury__rule {
+  margin: 1.5rem auto 0;
+  height: 1px;
+  width: 5rem;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--amber),
+    transparent
+  );
+}
+
+.theme-luxury .theme-header {
+  backdrop-filter: blur(12px);
+}

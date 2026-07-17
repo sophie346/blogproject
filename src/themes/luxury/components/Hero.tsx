@@ -1,6 +1,7 @@
-import type { HeroProps } from "./hero-types";
+import type { HeroProps } from "@/themes/types";
 
-export function LuxuryHero({
+/** Luxury centered hero — overrides default Hero. */
+export default function Hero({
   brandName,
   eyebrow,
   title,

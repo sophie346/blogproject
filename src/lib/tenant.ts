@@ -32,7 +32,11 @@ async function buildTenant(
     authToken
   );
   const { theme: settingsTheme, ...rest } = settings;
-  const theme = loadTheme(settingsTheme?.id || "default", settingsTheme?.tokens);
+  const theme = loadTheme(
+    settingsTheme?.id || "default",
+    settingsTheme?.tokens,
+    settingsTheme?.customCss
+  );
 
   const prefix = mapping.pathPrefix || "";
   const siteUrl = (

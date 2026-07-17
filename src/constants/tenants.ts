@@ -67,6 +67,22 @@ export const SITES: SiteBinding[] = [
     label: "nexus",
     siteUrl: "https://nexustruckupgrades.com/blog",
   },
+  {
+    id: "onedirectbuy-blog",
+    hosts: ["onedirectbuy.com", "www.onedirectbuy.com"],
+    pathPrefix: "/blog",
+    clientName: "3at1mrm65w3g",
+    label: "onedirectbuy",
+    siteUrl: "https://onedirectbuy.com/blog",
+  },
+  {
+    id: "oneproducthub-blog",
+    hosts: ["oneproducthub.com", "www.oneproducthub.com"],
+    pathPrefix: "/blog",
+    clientName: "3at1mrm65w3g",
+    label: "oneproducthub",
+    siteUrl: "https://oneproducthub.com/blog",
+  },
 
   // Example second blog on same host:
   // {

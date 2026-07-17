@@ -68,5 +68,6 @@ export const DEFAULT_BLOG_SETTINGS: Omit<
   theme: {
     id: "default",
     tokens: {},
+    customCss: "",
   },
 };

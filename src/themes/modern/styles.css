@@ -1,0 +1,19 @@
+/* Modern theme overrides — only apply under .theme-modern */
+.theme-modern .theme-header {
+  border-bottom-color: color-mix(in srgb, var(--amber) 35%, transparent);
+}
+
+.theme-modern .hero-modern__mesh {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--fog) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--fog) 4%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.theme-modern .theme-modern-card {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--amber) 0%, transparent);
+}
+
+.theme-modern .theme-modern-card:hover {
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--amber) 18%, transparent);
+}
