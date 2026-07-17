@@ -33,13 +33,13 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Deploy (GKE)
 
 - **Branch:** `cicd-prod` → Cloud Build (`cloudbuild.yaml`)
-- **Image:** `gcr.io/gentle-epoch-277301/onechannelblog:latest`
-- **Deployment:** `onechannelblog` (manifest lives in onechanneladmin-latest `deploymentsAll/ui/deployment-onechannelblog.yaml`)
+- **Image:** `gcr.io/gentle-epoch-277301/commonblog:latest`
+- **Deployment:** `commonblog` (manifest lives in onechanneladmin-latest `deploymentsAll/ui/deployment-commonblog.yaml`)
 
 First-time apply (from monorepo):
 
 ```bash
-kubectl apply -f deploymentsAll/ui/deployment-onechannelblog.yaml
+kubectl apply -f deploymentsAll/ui/deployment-commonblog.yaml
 ```
 
 Then push to `cicd-prod` (or run `gcloud builds submit --config=cloudbuild.yaml`).

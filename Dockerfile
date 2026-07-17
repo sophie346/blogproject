@@ -1,4 +1,4 @@
-# Multi-tenant blog — image: gcr.io/PROJECT_ID/onechannelblog
+# Multi-tenant blog — image: gcr.io/PROJECT_ID/commonblog
 FROM node:20-slim AS builder
 
 WORKDIR /app

@@ -1,18 +1,18 @@
-# CI/CD for multi-tenant blog → GKE deployment `onechannelblog`.
+# CI/CD for multi-tenant blog → GKE deployment `commonblog`.
 # Trigger on branch cicd-prod (Cloud Build trigger → this config).
 #
 # Local:
 #   gcloud builds submit --config=cloudbuild.yaml --project=gentle-epoch-277301
 #
-# Image: gcr.io/gentle-epoch-277301/onechannelblog:latest
+# Image: gcr.io/gentle-epoch-277301/commonblog:latest
 # Cluster: oneautobackend (us-east1-b), namespace default
 
 substitutions:
   _GKE_CLUSTER: oneautobackend
   _GKE_LOCATION: us-east1-b
   _K8S_NAMESPACE: default
-  _DEPLOYMENT: onechannelblog
-  _IMAGE_NAME: onechannelblog
+  _DEPLOYMENT: commonblog
+  _IMAGE_NAME: commonblog
 
 steps:
   - name: gcr.io/cloud-builders/docker
