@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { getApiConfig } from "./config";
+import { getApiConfig } from "./tenant";
 
 export const http = axios.create({
   timeout: 30000,

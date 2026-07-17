@@ -7,12 +7,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { JsonLd } from "@/components/JsonLd";
 import { RelatedPosts } from "@/components/sections/RelatedPosts";
 import { ShareBar } from "@/components/ShareBar";
-import {
-  estimateReadingTime,
-  formatBlogDate,
-  getBlogBySlug,
-  getRelatedBlogs,
-} from "@/services/blogs";
+import { estimateReadingTime, formatBlogDate } from "@/lib/blog-format";
 import { getSiteConfig } from "@/lib/config";
 import { resolvePostImage } from "@/lib/images";
 import { siteHref } from "@/lib/paths";
@@ -24,6 +19,7 @@ import {
   resolveBlogSeo,
   toIsoDate,
 } from "@/lib/seo";
+import { getBlogBySlug, getRelatedBlogs } from "@/services/blogs";
 
 type BlogPageProps = {
   params: Promise<{ slug: string }>;

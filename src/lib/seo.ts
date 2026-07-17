@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { estimateReadingTime } from "@/services/blogs";
+import { estimateReadingTime } from "@/lib/blog-format";
 import { getSiteConfig } from "./config";
 import { getValidImageUrl, resolvePostImage } from "./images";
 import { getTenant } from "./tenant";

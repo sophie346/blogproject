@@ -1,4 +1,4 @@
-import { getApiConfig as getTenantApiConfig, getTenant, getTenantOrNull } from "./tenant";
+import { getTenant, getTenantOrNull } from "./tenant";
 
 /** Brand config derived from the active (Host-resolved) tenant. */
 export async function getSiteConfig() {
@@ -16,5 +16,5 @@ export async function getSiteConfig() {
   };
 }
 
-export const getApiConfig = getTenantApiConfig;
-export { getTenant, getTenantOrNull };
+/** Prefer `@/lib/tenant` for getApiConfig to avoid circular re-exports. */
+export { getApiConfig, getTenant, getTenantOrNull } from "./tenant";
