@@ -1,5 +1,6 @@
 import { clients } from "@/clients";
 import { CLIENT_NAME, DEFAULT_CLIENT } from "@/constants/client";
+import { loadTheme } from "@/lib/load-theme";
 import type { ClientDefinition, TenantConfig } from "@/types/tenant";
 
 /** Normalize env values that may include quotes / trailing semicolons. */
@@ -19,7 +20,7 @@ function resolveDefinition(): ClientDefinition {
 
 let cached: TenantConfig | null = null;
 
-/** Resolve the active tenant: client definition + env-driven identity. */
+/** Resolve the active tenant: client definition + theme JSON + env identity. */
 export function getTenant(): TenantConfig {
   if (cached) return cached;
 
@@ -29,10 +30,16 @@ export function getTenant(): TenantConfig {
     env("ONEAUTO_CLIENTNAME") || def.clientName || CLIENT_NAME || DEFAULT_CLIENT;
   const label = env("WEBSITE_LABEL") || def.label || clientName;
 
+  // Theme CSS values: keyed by UI CLIENT_NAME (JSON today → API later).
+  const theme = loadTheme(CLIENT_NAME || def.clientName || DEFAULT_CLIENT);
+
+  const { theme: _ignoredTheme, ...rest } = def;
+
   cached = {
-    ...def,
+    ...rest,
     clientName,
     label,
+    theme,
   } as TenantConfig;
 
   return cached;

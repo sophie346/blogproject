@@ -79,8 +79,14 @@ export type TenantConfig = {
 };
 
 /** A client definition file exports this. Runtime identity (clientName,
- * label, apiBase) is merged from env by the tenant loader. */
-export type ClientDefinition = Omit<TenantConfig, "clientName" | "label"> & {
+ * label) is merged from env by the tenant loader. Theme CSS tokens are
+ * loaded from `src/data/themes/<client>.json` (later: API) via loadTheme. */
+export type ClientDefinition = Omit<
+  TenantConfig,
+  "clientName" | "label" | "theme"
+> & {
   clientName?: string;
   label?: string;
+  /** Optional override; normally set from theme JSON / API. */
+  theme?: ThemeConfig;
 };

@@ -1,0 +1,15 @@
+{
+  "id": "default",
+  "tokens": {
+    "ink": "#0c1118",
+    "inkSoft": "#151c27",
+    "steel": "#6f8fad",
+    "steelBright": "#8eb4d4",
+    "amber": "#d4a15a",
+    "amberSoft": "#e2bd82",
+    "fog": "#d7dee8",
+    "fogMuted": "#9aa8b8",
+    "line": "rgba(215, 222, 232, 0.12)",
+    "glow": "rgba(111, 143, 173, 0.22)"
+  }
+}

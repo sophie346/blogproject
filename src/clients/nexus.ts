@@ -2,8 +2,7 @@ import type { ClientDefinition } from "@/types/tenant";
 
 /**
  * Nexus — red / black / white editorial theme.
- * Uses the existing modern hero + shared card/layout components;
- * color comes entirely from theme tokens.
+ * CSS tokens live in src/data/themes/nexus.json (via loadTheme).
  */
 const nexus: ClientDefinition = {
   clientName: "nexus",
@@ -18,21 +17,6 @@ const nexus: ClientDefinition = {
     logo: "",
     locale: "en_US",
     language: "en-US",
-  },
-  theme: {
-    id: "modern",
-    tokens: {
-      ink: "#050505",
-      inkSoft: "#121212",
-      steel: "#a3a3a3",
-      steelBright: "#e5e5e5",
-      amber: "#e11d2e",
-      amberSoft: "#ff4d5a",
-      fog: "#ffffff",
-      fogMuted: "#c4c4c4",
-      line: "rgba(255, 255, 255, 0.12)",
-      glow: "rgba(225, 29, 46, 0.28)",
-    },
   },
   copy: {
     heroEyebrow: "Editorial · Nexus",

@@ -14,9 +14,7 @@ const oneauto: ClientDefinition = {
     locale: "en_US",
     language: "en-US",
   },
-  theme: {
-    id: "default",
-  },
+  // Theme tokens: src/data/themes/oneauto.json (via loadTheme)
   copy: {
     heroEyebrow: "Editorial · Automotive",
     heroTitle: "Dispatch from the garage and the road",
