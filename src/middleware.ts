@@ -6,17 +6,30 @@ import {
   toInternalPath,
 } from "@/constants/tenants";
 
+/** Public asset prefix (must match next.config assetPrefix). */
+const ASSET_PREFIX = "/blog";
+
 const PASSTHROUGH_PREFIXES = ["/_next", "/api/health", "/favicon.ico"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Asset prefix URLs (/blog/_next/*) are rewritten in next.config; do not
-  // run tenant matching on them (would 404 Image optimizer as Coming soon).
+  // Browser requests /blog/_next/* (assetPrefix + images.path). Rewrite to
+  // /_next/* so the built-in Image optimizer and static chunks are served.
+  // Do not run tenant matching on these (would render Coming soon).
   if (
-    pathname === "/blog/_next" ||
-    pathname.startsWith("/blog/_next/") ||
-    PASSTHROUGH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+    pathname === `${ASSET_PREFIX}/_next` ||
+    pathname.startsWith(`${ASSET_PREFIX}/_next/`)
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.slice(ASSET_PREFIX.length) || "/";
+    return NextResponse.rewrite(url);
+  }
+
+  if (
+    PASSTHROUGH_PREFIXES.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`)
+    )
   ) {
     return NextResponse.next();
   }
@@ -61,6 +74,11 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|blog/_next/static|blog/_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    /*
+     * Include /blog/_next/* (assetPrefix) so we can rewrite to /_next/*.
+     * Root /_next/* is handled by Next directly when present.
+     */
+    "/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/blog/_next/:path*",
   ],
 };
