@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
+/**
+ * Shared hosts mount the app under a path (e.g. onetruckparts.com/blog).
+ * Without assetPrefix, CSS/JS load from /_next/* which hits the storefront → 404.
+ * Assets are always under /blog/_next/* (see LB: route /blog/_next to commonblog).
+ * Temp mounts like /blogstemp still use this asset prefix — LB must send /blog/_next/* here.
+ */
+const ASSET_PREFIX = "/blog";
+
 const nextConfig: NextConfig = {
+  assetPrefix: ASSET_PREFIX,
   images: {
     remotePatterns: [
       {
