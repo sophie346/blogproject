@@ -26,6 +26,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // trailingSlash: true would 308 /api/health → /api/health/. GCP LB health
+  // checks do not follow redirects, so rewrite (no redirect) to the slash URL.
+  if (pathname === "/api/health") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/api/health/";
+    return NextResponse.rewrite(url);
+  }
+
   if (
     PASSTHROUGH_PREFIXES.some(
       (p) => pathname === p || pathname.startsWith(`${p}/`)
