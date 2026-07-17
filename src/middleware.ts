@@ -11,7 +11,13 @@ const PASSTHROUGH_PREFIXES = ["/_next", "/api/health", "/favicon.ico"];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (PASSTHROUGH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+  // Asset prefix URLs (/blog/_next/*) are rewritten in next.config; do not
+  // run tenant matching on them (would 404 Image optimizer as Coming soon).
+  if (
+    pathname === "/blog/_next" ||
+    pathname.startsWith("/blog/_next/") ||
+    PASSTHROUGH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+  ) {
     return NextResponse.next();
   }
 
@@ -55,6 +61,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|blog/_next/static|blog/_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

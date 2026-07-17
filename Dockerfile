@@ -26,8 +26,6 @@ ENV HOSTNAME=0.0.0.0
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 COPY --from=builder /app/next.config.ts ./
-# Required at runtime when images.loaderFile is set (see next.config.ts).
-COPY --from=builder /app/image-loader.ts ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules

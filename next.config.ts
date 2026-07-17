@@ -3,19 +3,19 @@ import type { NextConfig } from "next";
 /**
  * Shared hosts mount the app under a path (e.g. onetruckparts.com/blog).
  * Without assetPrefix, CSS/JS load from /_next/* which hits the storefront → 404.
- * Assets are always under /blog/_next/* (see LB: route /blog/_next to commonblog).
- * Temp mounts like /blogstemp still use this asset prefix — LB must send /blog/_next/* here.
+ *
+ * Assets always use /blog/_next/* (see LB: route /blog/_next to commonblog).
+ * Temp mounts like /blogstemp keep this asset prefix — pages are under /blogstemp,
+ * but CSS/JS/images still load from /blog/_next/* so WordPress can keep /blog.
  */
 const ASSET_PREFIX = "/blog";
 
 const nextConfig: NextConfig = {
   assetPrefix: ASSET_PREFIX,
   images: {
-    // assetPrefix alone does NOT prefix <Image> optimizer URLs in this Next version.
-    // Custom loader forces /blog/_next/image so LB hits commonblog (not storefront /_next).
-    loader: "custom",
-    // Must live at repo root — Docker runner copies this beside next.config.ts (no /src).
-    loaderFile: "./image-loader.ts",
+    // Prefix Image optimizer URLs for shared hosts (do NOT use loaderFile —
+    // that disables the built-in /_next/image API and 404s as Coming soon).
+    path: `${ASSET_PREFIX}/_next/image`,
     remotePatterns: [
       {
         protocol: "https",
@@ -79,6 +79,15 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  async rewrites() {
+    // Browser requests /blog/_next/* (assetPrefix + images.path); app serves /_next/*.
+    return [
+      {
+        source: `${ASSET_PREFIX}/_next/:path*`,
+        destination: "/_next/:path*",
+      },
+    ];
   },
 };
 
