@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { siteHref } from "@/lib/paths";
 import { getTenant } from "@/lib/tenant";
@@ -8,6 +7,10 @@ type LogoProps = {
   className?: string;
 };
 
+/**
+ * Use a native <img> for logos. Tenant logos come from many storefront domains;
+ * Next/Image optimization rejects unknown hosts (400) and breaks header/footer.
+ */
 export async function Logo({ href, className }: LogoProps) {
   const { brand } = await getTenant();
   const initial = (brand.name || "N").charAt(0).toUpperCase();
@@ -19,13 +22,14 @@ export async function Logo({ href, className }: LogoProps) {
       className={`site-logo inline-flex shrink-0 items-center gap-2.5 ${className || ""}`.trim()}
     >
       {brand.logo ? (
-        <Image
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={brand.logo}
           alt={brand.name}
           width={200}
           height={48}
           className="site-logo__image h-10 w-auto max-w-[220px] object-contain"
-          priority
+          decoding="async"
         />
       ) : (
         <>

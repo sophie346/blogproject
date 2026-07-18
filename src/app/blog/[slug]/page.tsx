@@ -205,9 +205,20 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
             {post.title}
           </h1>
 
-          {/* Featured image kept for SEO/meta only — visual hero removed (fill bugs covered content). */}
           {imageUrl ? (
-            <meta itemProp="image" content={imageUrl} />
+            <div className="post-featured mt-8 overflow-hidden rounded-xl bg-ink-soft">
+              {/* Native img with hard CSS box — never use Next Image fill here. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt={post.title}
+                width={1200}
+                height={630}
+                itemProp="image"
+                decoding="async"
+                className="post-featured__img"
+              />
+            </div>
           ) : null}
 
           {isUsefulPostExcerpt(post.excerpt, post.content) ? (

@@ -62,6 +62,36 @@ const nextConfig: NextConfig = {
         hostname: "**.nexustruckupgrades.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "onedirectbuy.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.onedirectbuy.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.onedirectbuy.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "oneproducthub.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.oneproducthub.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.oneproducthub.com",
+        pathname: "/**",
+      },
       // Featured images often include Unsplash query params — omit `search` so any query is allowed.
       {
         protocol: "https",
