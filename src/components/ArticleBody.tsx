@@ -28,7 +28,9 @@ function isSafePdfUrl(url: string) {
 function pdfEmbedMarkup(url: string, label = "Download PDF") {
   const safeUrl = escapeHtml(url);
   const safeLabel = escapeHtml(label.trim() || "Download PDF");
-  return `<figure class="article-pdf"><iframe class="article-pdf__frame" src="${safeUrl}#view=FitH" title="${safeLabel}" loading="lazy" referrerpolicy="no-referrer"></iframe><p class="article-pdf__link"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeLabel}</a></p></figure>`;
+  // Match WordPress `wp-block-file`: <object type="application/pdf"> + download link.
+  // iframe tends to show a heavier Chrome PDF chrome (sidebar/tools); object matches WP.
+  return `<figure class="article-pdf"><object class="article-pdf__frame" data="${safeUrl}" type="application/pdf" aria-label="${safeLabel}"><p class="article-pdf__fallback">This browser can’t preview PDFs. <a href="${safeUrl}" target="_blank" rel="noopener noreferrer">Open ${safeLabel}</a></p></object><p class="article-pdf__link"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeLabel}</a></p></figure>`;
 }
 
 /**

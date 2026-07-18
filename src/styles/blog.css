@@ -183,7 +183,7 @@
   border-radius: 0.25rem;
 }
 
-/* PDF file embeds (migrated from WP wp-block-file / <object type="application/pdf">). */
+/* PDF file embeds — same shape as WP core/file object preview. */
 .article-body .article-pdf {
   margin: 1.75em 0;
 }
@@ -191,15 +191,20 @@
 .article-body .article-pdf__frame {
   display: block;
   width: 100%;
-  height: min(70vh, 40rem);
-  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--ink-soft) 90%, black);
+  height: 600px;
+  max-height: 70vh;
+  border: 0;
+  background: #111;
 }
 
 .article-body .article-pdf__link {
   margin-top: 0.75em;
   font-size: 0.95rem;
+}
+
+.article-body .article-pdf__fallback {
+  padding: 1rem;
+  color: var(--fog-muted);
 }
 
 .article-body blockquote {
