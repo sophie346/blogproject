@@ -4,9 +4,8 @@ import type { NextConfig } from "next";
  * Shared hosts mount the app under a path (e.g. onetruckparts.com/blog).
  * Without assetPrefix, CSS/JS load from /_next/* which hits the storefront → 404.
  *
- * Assets always use /blog/_next/* (see LB: route /blog/_next to commonblog).
- * Temp mounts like /blogstemp keep this asset prefix — pages are under /blogstemp,
- * but CSS/JS/images still load from /blog/_next/* so WordPress can keep /blog.
+ * Assets always use /blog/_next/* so shared hosts can route static assets
+ * to commonblog without colliding with the storefront `/_next/*`.
  */
 const ASSET_PREFIX = "/blog";
 

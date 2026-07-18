@@ -64,16 +64,6 @@ export const SITES: SiteBinding[] = [
     label: "oneauto",
     siteUrl: "https://onetruckparts.com/blog",
   },
-  // Legacy mount — middleware 301s /blogstemp/* → /blog/* after cutover.
-  {
-    id: "nexustruckupgrades-blogstemp",
-    hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],
-    pathPrefix: "/blogstemp",
-    clientName: "1p0248qcm3j1k401",
-    label: "nexus",
-    siteUrl: "https://nexustruckupgrades.com/blogstemp",
-    themeId: "modern",
-  },
   {
     id: "nexustruckupgrades-blog",
     hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],
