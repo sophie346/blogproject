@@ -64,7 +64,7 @@ export const SITES: SiteBinding[] = [
     label: "oneauto",
     siteUrl: "https://onetruckparts.com/blog",
   },
-  // Temp test mount — LB /blogstemp → commonblog; WordPress stays on /blog.
+  // Legacy mount — middleware 301s /blogstemp/* → /blog/* after cutover.
   {
     id: "nexustruckupgrades-blogstemp",
     hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],
@@ -74,7 +74,6 @@ export const SITES: SiteBinding[] = [
     siteUrl: "https://nexustruckupgrades.com/blogstemp",
     themeId: "modern",
   },
-  // Future cutover target (LB still sends /blog → WordPress VM).
   {
     id: "nexustruckupgrades-blog",
     hosts: ["nexustruckupgrades.com", "www.nexustruckupgrades.com"],

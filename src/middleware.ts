@@ -45,6 +45,20 @@ export function middleware(request: NextRequest) {
   const host = normalizeHost(
     request.headers.get("x-forwarded-host") || request.headers.get("host")
   );
+
+  // Nexus cutover: /blogstemp → /blog (permanent). Keep LB route until Search Console settles.
+  if (
+    (host === "nexustruckupgrades.com" || host === "www.nexustruckupgrades.com") &&
+    (pathname === "/blogstemp" || pathname.startsWith("/blogstemp/"))
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname =
+      pathname === "/blogstemp" || pathname === "/blogstemp/"
+        ? "/blog/"
+        : `/blog/${pathname.slice("/blogstemp/".length)}`;
+    return NextResponse.redirect(url, 301);
+  }
+
   const site = resolveSiteBinding(host, pathname);
 
   const requestHeaders = new Headers(request.headers);
