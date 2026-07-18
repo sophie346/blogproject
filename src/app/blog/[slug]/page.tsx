@@ -143,25 +143,24 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
         <meta itemProp="datePublished" content={dateIso} />
       ) : null}
 
-      {/* Fixed-height hero box — max-height on bare <img> is unreliable in Next Image. */}
       <header className="border-b border-line/80">
-        {imageUrl ? (
-          <div className="mx-auto w-full max-w-3xl px-5 pt-6 sm:px-8 sm:pt-8">
-            <div className="blog-hero-frame relative overflow-hidden bg-ink-soft sm:rounded-2xl">
+        <div className="mx-auto w-full max-w-3xl px-5 pt-6 sm:px-8 sm:pt-8 sm:pb-2">
+          {imageUrl ? (
+            <div className="blog-hero-frame relative mb-6 overflow-hidden bg-ink-soft">
               <Image
                 src={imageUrl}
                 alt={post.title}
                 fill
                 priority
-                sizes="(max-width: 768px) 100vw, 768px"
-                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 720px"
+                className="object-cover object-center"
                 itemProp="image"
               />
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
 
-        <div className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+        <div className="mx-auto w-full max-w-3xl px-5 pb-10 pt-2 sm:px-8 sm:pb-14">
           <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex flex-wrap items-center gap-2 font-display text-sm text-steel-bright">
               <li>
