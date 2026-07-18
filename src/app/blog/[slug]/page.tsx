@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -144,23 +143,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
       ) : null}
 
       <header className="border-b border-line/80">
-        <div className="mx-auto w-full max-w-3xl px-5 pt-6 sm:px-8 sm:pt-8 sm:pb-2">
-          {imageUrl ? (
-            <div className="blog-hero-frame relative mb-6 overflow-hidden bg-ink-soft">
-              <Image
-                src={imageUrl}
-                alt={post.title}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 720px"
-                className="object-cover object-center"
-                itemProp="image"
-              />
-            </div>
-          ) : null}
-        </div>
-
-        <div className="mx-auto w-full max-w-3xl px-5 pb-10 pt-2 sm:px-8 sm:pb-14">
+        <div className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
           <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex flex-wrap items-center gap-2 font-display text-sm text-steel-bright">
               <li>
@@ -185,7 +168,7 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
               <li aria-hidden className="text-fog-muted/40">
                 /
               </li>
-              <li className="text-fog-muted line-clamp-1" aria-current="page">
+              <li className="max-w-full truncate text-fog-muted" aria-current="page">
                 {post.title}
               </li>
             </ol>
@@ -221,6 +204,32 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
           >
             {post.title}
           </h1>
+
+          {/* Native <img> + inline size — Next Image `fill` was escaping and covering the viewport. */}
+          {imageUrl ? (
+            <div
+              className="mt-8 overflow-hidden rounded-xl bg-ink-soft"
+              style={{ width: "100%", height: 160, maxHeight: 160 }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt={post.title}
+                width={1200}
+                height={160}
+                itemProp="image"
+                decoding="async"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  height: 160,
+                  maxHeight: 160,
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+            </div>
+          ) : null}
 
           {isUsefulPostExcerpt(post.excerpt, post.content) ? (
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fog-muted sm:text-xl">
