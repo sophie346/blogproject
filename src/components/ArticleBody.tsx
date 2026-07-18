@@ -15,6 +15,59 @@ function stripDangerousHtml(html: string) {
     .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "");
 }
 
+function isSafePdfUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return false;
+    return /\.pdf$/i.test(parsed.pathname);
+  } catch {
+    return false;
+  }
+}
+
+function pdfEmbedMarkup(url: string, label = "Download PDF") {
+  const safeUrl = escapeHtml(url);
+  const safeLabel = escapeHtml(label.trim() || "Download PDF");
+  return `<figure class="article-pdf"><iframe class="article-pdf__frame" src="${safeUrl}#view=FitH" title="${safeLabel}" loading="lazy" referrerpolicy="no-referrer"></iframe><p class="article-pdf__link"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeLabel}</a></p></figure>`;
+}
+
+/**
+ * WordPress file blocks use <object hidden> + JS to show a PDF preview.
+ * After sanitization that preview never unhides — rebuild a real embed + link.
+ */
+export function normalizePdfEmbeds(html: string) {
+  let out = String(html ?? "");
+  if (!out) return out;
+
+  // Full WP "core/file" block (object + download link).
+  out = out.replace(
+    /<div\b[^>]*(?:data-wp-interactive=["']core\/file["']|wp-block-file)[^>]*>[\s\S]*?<\/div>/gi,
+    (block) => {
+      const href =
+        block.match(/\bhref\s*=\s*(["'])(https?:\/\/[^"']+\.pdf(?:\?[^"']*)?)\1/i)?.[2] ||
+        block.match(/\bdata\s*=\s*(["'])(https?:\/\/[^"']+\.pdf(?:\?[^"']*)?)\1/i)?.[2];
+      if (!href || !isSafePdfUrl(href)) return block;
+      const label =
+        block.match(/<a\b[^>]*>([\s\S]*?)<\/a>/i)?.[1]?.replace(/<[^>]+>/g, "").trim() ||
+        "Download PDF";
+      return pdfEmbedMarkup(href, label);
+    }
+  );
+
+  // Standalone PDF <object> / <embed>.
+  out = out.replace(
+    /<(?:object|embed)\b[^>]*(?:type\s*=\s*(["'])application\/pdf\1|[\s"'][^"'>\s]+\.pdf(?:\?[^"'>\s]*)?)[^>]*(?:\/>|>\s*<\/(?:object|embed)>)/gi,
+    (tag) => {
+      const href =
+        tag.match(/\b(?:data|src)\s*=\s*(["'])(https?:\/\/[^"']+\.pdf(?:\?[^"']*)?)\1/i)?.[2];
+      if (!href || !isSafePdfUrl(href)) return "";
+      return pdfEmbedMarkup(href);
+    }
+  );
+
+  return out;
+}
+
 function imagePathKey(url: string): string {
   try {
     const path = new URL(url).pathname;
@@ -57,7 +110,10 @@ export function toArticleHtml(content: string, featuredUrl?: string | null) {
   if (!trimmed) return "";
 
   if (/<[a-z][\s\S]*>/i.test(trimmed)) {
-    return stripDangerousHtml(stripLeadingDuplicateImage(trimmed, featuredUrl));
+    // Sanitize first (strips WP styles/scripts), then rebuild PDF embeds.
+    return normalizePdfEmbeds(
+      stripDangerousHtml(stripLeadingDuplicateImage(trimmed, featuredUrl))
+    );
   }
 
   return trimmed
