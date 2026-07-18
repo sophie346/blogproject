@@ -143,19 +143,18 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
         <meta itemProp="datePublished" content={dateIso} />
       ) : null}
 
-      {/* Constrained hero — never fill/viewport; avoids mobile image blow-up. */}
+      {/* Fixed-height hero box — max-height on bare <img> is unreliable in Next Image. */}
       <header className="border-b border-line/80">
         {imageUrl ? (
-          <div className="mx-auto w-full max-w-5xl sm:px-8 sm:pt-8">
-            <div className="overflow-hidden bg-ink-soft sm:rounded-2xl">
+          <div className="mx-auto w-full max-w-3xl px-5 pt-6 sm:px-8 sm:pt-8">
+            <div className="blog-hero-frame relative overflow-hidden bg-ink-soft sm:rounded-2xl">
               <Image
                 src={imageUrl}
                 alt={post.title}
-                width={1600}
-                height={900}
+                fill
                 priority
-                sizes="(max-width: 768px) 100vw, 1024px"
-                className="blog-hero-image h-auto w-full object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
                 itemProp="image"
               />
             </div>
