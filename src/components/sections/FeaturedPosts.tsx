@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { formatBlogDate } from "@/services/blogs";
 import { resolvePostImage } from "@/lib/images";
@@ -39,13 +38,13 @@ export async function FeaturedPosts({
         <Link href={href} className="featured-card featured-card--compact group">
           {imageUrl ? (
             <div className="featured-card__thumb">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={imageUrl}
                 alt={post.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 280px"
-                className="featured-card__image"
-                priority
+                width={280}
+                height={180}
+                decoding="async"
               />
             </div>
           ) : (

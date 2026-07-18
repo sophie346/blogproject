@@ -200,6 +200,102 @@
   font-style: italic;
 }
 
+/* Related posts — thumbs must be sized; Next Image fill without this covered the page. */
+.related-posts {
+  margin-top: 3.5rem;
+}
+
+.related-posts__list {
+  margin-top: 1.5rem;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.related-posts__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+}
+
+.related-posts__thumb {
+  position: relative;
+  flex: 0 0 5.5rem;
+  width: 5.5rem;
+  height: 4.25rem;
+  max-width: 5.5rem;
+  max-height: 4.25rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--ink-soft);
+}
+
+.related-posts__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.related-posts__thumb--empty {
+  background: color-mix(in srgb, var(--ink-soft) 80%, var(--amber) 8%);
+}
+
+.related-posts__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.related-posts__arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--fog-muted);
+}
+
+.featured-card--compact {
+  display: flex;
+  gap: 1.25rem;
+  align-items: stretch;
+  text-decoration: none;
+  color: inherit;
+}
+
+.featured-card__thumb {
+  position: relative;
+  flex: 0 0 10rem;
+  width: 10rem;
+  height: 7rem;
+  max-width: 10rem;
+  max-height: 7rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--ink-soft);
+}
+
+.featured-card__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-card__thumb--empty {
+  background: color-mix(in srgb, var(--ink-soft) 80%, var(--amber) 8%);
+}
+
+.featured-card__body--compact {
+  min-width: 0;
+  flex: 1;
+}
+
 .theme-header {
   background: var(--header-bg);
   border-color: var(--header-border);

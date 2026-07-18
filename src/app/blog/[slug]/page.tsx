@@ -205,30 +205,9 @@ export default async function BlogPage({ params, searchParams }: BlogPageProps) 
             {post.title}
           </h1>
 
-          {/* Native <img> + inline size — Next Image `fill` was escaping and covering the viewport. */}
+          {/* Featured image kept for SEO/meta only — visual hero removed (fill bugs covered content). */}
           {imageUrl ? (
-            <div
-              className="mt-8 overflow-hidden rounded-xl bg-ink-soft"
-              style={{ width: "100%", height: 160, maxHeight: 160 }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageUrl}
-                alt={post.title}
-                width={1200}
-                height={160}
-                itemProp="image"
-                decoding="async"
-                style={{
-                  display: "block",
-                  width: "100%",
-                  height: 160,
-                  maxHeight: 160,
-                  objectFit: "cover",
-                  objectPosition: "center",
-                }}
-              />
-            </div>
+            <meta itemProp="image" content={imageUrl} />
           ) : null}
 
           {isUsefulPostExcerpt(post.excerpt, post.content) ? (
