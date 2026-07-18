@@ -8,6 +8,7 @@ import { ThemeHeader } from "@/components/themed/ThemeHeader";
 import { getSiteConfig } from "@/lib/config";
 import { getTenantOrNull } from "@/lib/tenant";
 import { themeTokensToStyle } from "@/lib/theme";
+import { storefrontFaviconIcons } from "@/lib/favicon";
 import { absoluteUrl, getDefaultOgImage, getSiteUrl } from "@/lib/seo";
 import { sanitizeCustomCss } from "@/lib/sanitize-html";
 import "./globals.css";
@@ -46,6 +47,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: siteConfig.description,
     applicationName: siteConfig.name,
+    // Prefer main storefront favicon (e.g. onedirectbuy.com/icon.png), not the blog mount.
+    icons: storefrontFaviconIcons(tenant.siteUrl, tenant.brand.favicon),
     authors: [{ name: siteConfig.author, url: await absoluteUrl("/") }],
     creator: siteConfig.author,
     publisher: siteConfig.name,

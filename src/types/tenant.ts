@@ -35,6 +35,8 @@ export type TenantBrand = {
   author: string;
   /** Absolute or root-relative logo URL. Falls back to text logo if empty. */
   logo?: string;
+  /** Absolute favicon URL from the main storefront (optional override). */
+  favicon?: string;
   locale: string;
   language: string;
 };
