@@ -91,6 +91,21 @@ const nextConfig: NextConfig = {
         hostname: "**.oneproducthub.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "onechanneladmin.info",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.onechanneladmin.info",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.onechanneladmin.info",
+        pathname: "/**",
+      },
       // Featured images often include Unsplash query params — omit `search` so any query is allowed.
       {
         protocol: "https",
