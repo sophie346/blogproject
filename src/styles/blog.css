@@ -8,13 +8,13 @@
     radial-gradient(1200px 600px at 10% -10%, var(--glow), transparent 55%),
     radial-gradient(
       900px 500px at 90% 0%,
-      color-mix(in srgb, var(--amber) 14%, transparent),
+      color-mix(in srgb, var(--amber) 12%, transparent),
       transparent 50%
     ),
     linear-gradient(
       180deg,
       var(--ink) 0%,
-      color-mix(in srgb, var(--ink) 92%, black) 48%,
+      color-mix(in srgb, var(--ink) 70%, var(--ink-soft)) 55%,
       var(--ink-soft) 100%
     );
 }
