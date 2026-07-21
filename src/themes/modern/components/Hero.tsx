@@ -1,8 +1,90 @@
+import { getTenant } from "@/lib/tenant";
 import type { HeroProps } from "@/themes/types";
 import { HeroIllustration } from "./HeroIllustration";
 
-/** Modern split hero with illustration — overrides default Hero. */
-export default function Hero({
+const PRODUCT_FAMILY = [
+  { label: "1CA", href: "https://onechanneladmin.info/" },
+  { label: "OneProductHub", href: "https://oneproducthub.com/" },
+  { label: "OneFulfillCenter", href: "https://onefulfillcenter.com/" },
+  { label: "OneDirectBuy", href: "https://onedirectbuy.com/" },
+];
+
+/** Centered marketing hero — distinct from the shared split+illustration layout. */
+function CenteredHero({
+  eyebrow,
+  title,
+  subtitle,
+  cta,
+  stat,
+}: HeroProps) {
+  return (
+    <section className="relative overflow-hidden border-b border-line bg-ink">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-24 top-0 h-[22rem] w-[22rem] rounded-full opacity-50 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in srgb, var(--amber) 28%, transparent), transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-20 bottom-0 h-[20rem] w-[20rem] rounded-full opacity-45 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in srgb, var(--amber-soft) 22%, transparent), transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-20 lg:py-24">
+        <p className="fade-up font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-steel-bright">
+          {eyebrow}
+        </p>
+
+        <h1 className="fade-up fade-up-delay-1 mt-5 max-w-3xl font-display text-[clamp(2.1rem,5.5vw,3.75rem)] font-extrabold leading-[1.05] tracking-[-0.04em] text-fog">
+          {title}
+        </h1>
+
+        <p className="fade-up fade-up-delay-2 mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-fog-muted sm:text-lg">
+          {subtitle}
+        </p>
+
+        <div className="fade-up fade-up-delay-2 mt-9 flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="#blogs"
+            className="inline-flex items-center gap-2 rounded-full bg-amber px-7 py-3.5 font-display text-sm font-semibold text-white no-underline shadow-[0_12px_40px_color-mix(in_srgb,var(--amber)_35%,transparent)] transition hover:brightness-110"
+          >
+            {cta}
+            <span aria-hidden>→</span>
+          </a>
+          {stat ? (
+            <span className="rounded-full border border-line bg-ink-soft px-3.5 py-1.5 font-display text-xs text-fog-muted shadow-sm">
+              {stat}
+            </span>
+          ) : null}
+        </div>
+
+        <ul className="fade-up fade-up-delay-2 mt-12 flex max-w-3xl flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+          {PRODUCT_FAMILY.map((item) => (
+            <li key={item.label}>
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full border border-line bg-ink-soft px-3.5 py-2 font-display text-xs font-semibold text-fog no-underline shadow-sm transition hover:border-amber hover:text-amber sm:text-[0.8rem]"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/** Classic modern split hero with illustration. */
+function SplitHero({
   brandName,
   eyebrow,
   title,
@@ -67,4 +149,20 @@ export default function Hero({
       </div>
     </section>
   );
+}
+
+/**
+ * Modern theme hero — layout from `theme.heroLayout`:
+ * - `split` (default): brand + illustration (Nexus-style)
+ * - `centered`: marketing headline + product family chips (OneChannelAdmin-style)
+ */
+export default async function Hero(props: HeroProps) {
+  const { theme } = await getTenant();
+  const layout = String(theme.heroLayout || "split").toLowerCase();
+
+  if (layout === "centered" || layout === "marketing") {
+    return <CenteredHero {...props} />;
+  }
+
+  return <SplitHero {...props} />;
 }

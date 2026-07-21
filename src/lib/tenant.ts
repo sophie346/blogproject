@@ -39,7 +39,8 @@ async function buildTenant(
   const theme = loadTheme(
     mapping.themeId || settingsTheme?.id || "default",
     settingsTheme?.tokens,
-    settingsTheme?.customCss
+    settingsTheme?.customCss,
+    settingsTheme?.heroLayout
   );
 
   const prefix = mapping.pathPrefix || "";

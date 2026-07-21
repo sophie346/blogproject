@@ -38,6 +38,12 @@ export type ThemeTokens = {
 export type ThemeConfig = {
   id: ThemeId;
   tokens?: ThemeTokens;
+  /**
+   * Modern hero layout:
+   * - `split` — brand + illustration (default)
+   * - `centered` — marketing headline + product chips
+   */
+  heroLayout?: "split" | "centered" | "marketing";
   /** Site-level CSS overrides from ChannelAdmin (sanitized before inject). */
   customCss?: string;
 };

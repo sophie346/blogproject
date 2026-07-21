@@ -137,6 +137,21 @@ function mergeSettings(
     theme: {
       id: themeId,
       tokens: themeTokens,
+      heroLayout: (["split", "centered", "marketing"].includes(
+        String(
+          (src.theme && typeof src.theme === "object"
+            ? (src.theme as { heroLayout?: string }).heroLayout
+            : "") || ""
+        )
+          .trim()
+          .toLowerCase()
+      )
+        ? (String(
+            (src.theme as { heroLayout?: string }).heroLayout
+          )
+            .trim()
+            .toLowerCase() as "split" | "centered" | "marketing")
+        : undefined),
       customCss: String(
         (src.theme && typeof src.theme === "object"
           ? (src.theme as { customCss?: string }).customCss
