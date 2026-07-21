@@ -157,8 +157,12 @@ function SplitHero({
  * - `centered`: marketing headline + product family chips (OneChannelAdmin-style)
  */
 export default async function Hero(props: HeroProps) {
-  const { theme } = await getTenant();
-  const layout = String(theme.heroLayout || "split").toLowerCase();
+  const { theme, label } = await getTenant();
+  const layout = String(
+    theme.heroLayout ||
+      // Until BFF carries heroLayout everywhere, keep OCA on the marketing hero.
+      (label === "onechanneladmin" ? "centered" : "split")
+  ).toLowerCase();
 
   if (layout === "centered" || layout === "marketing") {
     return <CenteredHero {...props} />;
