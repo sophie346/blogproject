@@ -90,7 +90,7 @@ export const SITES: SiteBinding[] = [
     siteUrl: "https://oneproducthub.com/blog",
   },
   {
-    id: "onechanneladmin-blog",
+    id: "onechanneladmin-blogtemp",
     hosts: [
       "onechanneladmin.com",
       "www.onechanneladmin.com",
@@ -98,10 +98,10 @@ export const SITES: SiteBinding[] = [
       "onechanneladmin.info",
       "www.onechanneladmin.info",
     ],
-    pathPrefix: "/blog",
+    pathPrefix: "/blogtemp",
     clientName: "oneauto",
     label: "onechanneladmin",
-    siteUrl: "https://onechanneladmin.com/blog",
+    siteUrl: "https://onechanneladmin.com/blogtemp",
     themeId: "modern",
   },
 
