@@ -1,4 +1,5 @@
 import { BlogGrid } from "@/components/common/BlogGrid";
+import { BlogSearchForm } from "@/components/common/BlogSearchForm";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Pagination } from "@/components/common/Pagination";
 import { CategorySidebar } from "@/components/sections/CategorySidebar";
@@ -17,6 +18,7 @@ type LatestPostsProps = {
   emptyTitle: string;
   emptyMessage: string;
   categories?: Category[];
+  searchQuery?: string;
 };
 
 export async function LatestPosts({
@@ -30,10 +32,15 @@ export async function LatestPosts({
   emptyTitle,
   emptyMessage,
   categories = [],
+  searchQuery = "",
 }: LatestPostsProps) {
   const homePath = await siteHref("/");
   const showSidebar = categories.length > 0;
-  const showDescription = Boolean(String(description || "").trim());
+  const q = String(searchQuery || "").trim();
+  const isSearch = Boolean(q);
+  const showDescription = Boolean(String(description || "").trim()) && !isSearch;
+  const sectionHeading = isSearch ? `Results for “${q}”` : heading;
+  const sectionEyebrow = isSearch ? "Search" : eyebrow;
 
   return (
     <section
@@ -45,33 +52,45 @@ export async function LatestPosts({
         <div className="stories-section__header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <p className="font-display text-xs uppercase tracking-[0.2em] text-steel-bright">
-              {eyebrow}
+              {sectionEyebrow}
             </p>
             <h2
               id="blogs-heading"
               className="mt-2 font-display text-2xl font-semibold tracking-tight text-fog sm:text-3xl"
             >
-              {heading}
+              {sectionHeading}
             </h2>
             {showDescription ? (
               <p className="mt-2 text-sm leading-relaxed text-fog-muted sm:text-base">
                 {description}
               </p>
             ) : null}
+            {isSearch ? (
+              <p className="mt-2 text-sm text-fog-muted">
+                {totalcount} {totalcount === 1 ? "blog" : "blogs"} found
+              </p>
+            ) : null}
           </div>
-          {totalcount > 0 ? (
-            <div
-              className="stories-section__count flex min-w-[5rem] flex-col items-center justify-center rounded-xl border border-amber/30 bg-ink-soft px-4 py-3"
-              aria-hidden
-            >
-              <span className="stories-section__count-value font-display text-2xl font-bold leading-none text-amber-soft">
-                {totalcount}
-              </span>
-              <span className="stories-section__count-label mt-1 font-display text-[0.62rem] uppercase tracking-[0.2em] text-fog-muted">
-                posts
-              </span>
-            </div>
-          ) : null}
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[16rem] sm:items-end">
+            <BlogSearchForm
+              initialQuery={q}
+              actionPath={homePath}
+              className="w-full sm:w-[18rem]"
+            />
+            {!isSearch && totalcount > 0 ? (
+              <div
+                className="stories-section__count flex min-w-[5rem] flex-col items-center justify-center rounded-xl border border-amber/30 bg-ink-soft px-4 py-3 sm:self-end"
+                aria-hidden
+              >
+                <span className="stories-section__count-value font-display text-2xl font-bold leading-none text-amber-soft">
+                  {totalcount}
+                </span>
+                <span className="stories-section__count-label mt-1 font-display text-[0.62rem] uppercase tracking-[0.2em] text-fog-muted">
+                  posts
+                </span>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {posts.length === 0 ? (
@@ -89,6 +108,7 @@ export async function LatestPosts({
                 limit={limit}
                 basePath={homePath}
                 hash="#blogs"
+                query={{ s: q || undefined }}
               />
             </div>
           </div>
@@ -101,6 +121,7 @@ export async function LatestPosts({
               limit={limit}
               basePath={homePath}
               hash="#blogs"
+              query={{ s: q || undefined }}
             />
           </>
         )}

@@ -14,7 +14,7 @@ import { getBlogs } from "@/services/blogs";
 import { getCategories } from "@/services/categories";
 
 type HomeProps = {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; s?: string; q?: string }>;
 };
 
 const LIMIT = 12;
@@ -24,27 +24,34 @@ export async function generateMetadata({
 }: HomeProps): Promise<Metadata> {
   const params = await searchParams;
   const page = Math.max(parseInt(params.page || "1", 10) || 1, 1);
-  const result = await getBlogs(page, LIMIT);
+  const q = String(params.s || params.q || "").trim();
+  const result = await getBlogs(page, LIMIT, q ? { q } : undefined);
   const totalcount = result.ok ? result.totalcount : 0;
   const totalPages = Math.max(1, Math.ceil(totalcount / LIMIT));
-
-  return await buildHomeMetadata({ page, totalPages });
+  const base = await buildHomeMetadata({ page, totalPages });
+  if (!q) return base;
+  return {
+    ...base,
+    title: `Search: ${q}`,
+  };
 }
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
   const page = Math.max(parseInt(params.page || "1", 10) || 1, 1);
+  const q = String(params.s || params.q || "").trim();
   const tenant = await getTenant();
 
-  const result = await getBlogs(page, LIMIT);
+  const result = await getBlogs(page, LIMIT, q ? { q } : undefined);
   const totalcount = result.ok ? result.totalcount : 0;
   const totalPages = Math.max(1, Math.ceil(totalcount / LIMIT));
   const rel = await getPaginationRelLinks(page, totalPages);
   const posts = result.ok ? result.data : [];
+  const isSearch = Boolean(q);
 
   const categories = tenant.sections.categories ? await getCategories() : [];
   const stat =
-    result.ok && totalcount > 0
+    result.ok && totalcount > 0 && !isSearch
       ? `${totalcount} ${totalcount === 1 ? "blog" : "blogs"} published`
       : undefined;
 
@@ -56,8 +63,14 @@ export default async function Home({ searchParams }: HomeProps) {
         : result.message.toLowerCase().includes("expired")
           ? "Session expired"
           : "Couldn’t load blogs"
-    : tenant.copy.emptyTitle;
-  const emptyMessage = !result.ok ? result.message : tenant.copy.emptyMessage;
+    : isSearch
+      ? "No matching blogs"
+      : tenant.copy.emptyTitle;
+  const emptyMessage = !result.ok
+    ? result.message
+    : isSearch
+      ? `Nothing matched “${q}”. Try another keyword.`
+      : tenant.copy.emptyMessage;
 
   return (
     <>
@@ -65,9 +78,9 @@ export default async function Home({ searchParams }: HomeProps) {
       {rel.prev ? <link rel="prev" href={rel.prev} /> : null}
       {rel.next ? <link rel="next" href={rel.next} /> : null}
 
-      <Hero stat={stat} />
+      {!isSearch ? <Hero stat={stat} /> : null}
 
-      {tenant.sections.featured && page === 1 ? (
+      {!isSearch && tenant.sections.featured && page === 1 ? (
         <FeaturedPosts posts={posts} />
       ) : null}
 
@@ -82,9 +95,10 @@ export default async function Home({ searchParams }: HomeProps) {
         emptyTitle={emptyTitle}
         emptyMessage={emptyMessage}
         categories={tenant.sections.categories ? categories : []}
+        searchQuery={q}
       />
 
-      {tenant.sections.newsletter ? (
+      {!isSearch && tenant.sections.newsletter ? (
         <Newsletter brandName={tenant.brand.name} />
       ) : null}
     </>

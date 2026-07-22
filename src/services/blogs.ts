@@ -297,16 +297,18 @@ async function missingConfig(): Promise<BlogConfigError | null> {
 export async function getBlogs(
   page = 1,
   limit = 12,
-  filters?: { category?: string; tag?: string }
+  filters?: { category?: string; tag?: string; q?: string }
 ): Promise<BlogListResult> {
   const configError = await missingConfig();
   if (configError) return configError;
 
+  const q = String(filters?.q || "").trim();
   const result = await bffGet<BlogListResponse>("/prod/blogs", {
     page,
     limit,
     ...(filters?.category ? { category: filters.category } : {}),
     ...(filters?.tag ? { tag: filters.tag } : {}),
+    ...(q ? { q } : {}),
   });
   if (!result.ok) {
     return {

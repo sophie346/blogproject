@@ -27,6 +27,7 @@ async function resolveNavHref(href: string) {
 /** Shared header — colors from theme.tokens (headerBg / headerFg / cta*). */
 export default async function Header() {
   const { nav, brand, copy } = await getTenant();
+  const searchHomePath = await siteHref("/");
 
   const uniqueNav = nav.filter(
     (item, index, list) =>
@@ -68,6 +69,7 @@ export default async function Header() {
           ctaLabel={ctaLabel}
           ctaHref={ctaHref}
           ctaIsExternal={ctaIsExternal}
+          searchHomePath={searchHomePath}
         />
       </div>
     </header>

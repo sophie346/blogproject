@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
+import { BlogSearchForm } from "@/components/common/BlogSearchForm";
 
 export type HeaderNavItem = {
   label: string;
@@ -13,6 +14,9 @@ type SiteHeaderNavProps = {
   ctaLabel: string;
   ctaHref: string;
   ctaIsExternal?: boolean;
+  /** Public blog home for search form action (includes pathPrefix). */
+  searchHomePath?: string;
+  searchQuery?: string;
 };
 
 function NavAnchor({
@@ -45,6 +49,8 @@ export function SiteHeaderNav({
   ctaLabel,
   ctaHref,
   ctaIsExternal = false,
+  searchHomePath = "/",
+  searchQuery = "",
 }: SiteHeaderNavProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
@@ -82,9 +88,18 @@ export function SiteHeaderNav({
         ))}
       </nav>
 
+      <div className="ml-2 hidden min-w-[10rem] max-w-[14rem] flex-1 lg:ml-4 lg:block xl:max-w-[16rem]">
+        <BlogSearchForm
+          compact
+          initialQuery={searchQuery}
+          actionPath={searchHomePath}
+          className="w-full"
+        />
+      </div>
+
       <a
         href={ctaHref}
-        className="theme-header__cta ml-auto hidden shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-display text-xs font-semibold transition md:inline-flex"
+        className="theme-header__cta ml-2 hidden shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-display text-xs font-semibold transition md:inline-flex"
         {...(ctaIsExternal
           ? { target: "_blank", rel: "noopener noreferrer" }
           : {})}
@@ -126,6 +141,11 @@ export function SiteHeaderNav({
           id={panelId}
           className="theme-header__mobile absolute inset-x-0 top-full z-40 border-b border-[color:var(--header-border)] bg-[color:var(--header-bg)] px-5 py-4 shadow-lg md:hidden"
         >
+          <BlogSearchForm
+            initialQuery={searchQuery}
+            actionPath={searchHomePath}
+            className="mb-3 w-full"
+          />
           <nav className="flex flex-col gap-1" aria-label="Mobile primary">
             {items.map((item) => (
               <NavAnchor

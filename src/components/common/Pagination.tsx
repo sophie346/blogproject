@@ -6,8 +6,10 @@ type PaginationProps = {
   limit: number;
   /** Base path for links. Defaults to home ("/"). */
   basePath?: string;
-  /** Optional hash appended to links (e.g. "#stories"). */
+  /** Optional hash appended to links (e.g. "#blogs"). */
   hash?: string;
+  /** Extra query params preserved across pages (e.g. search `s`). */
+  query?: Record<string, string | undefined>;
 };
 
 export function Pagination({
@@ -16,6 +18,7 @@ export function Pagination({
   limit,
   basePath = "/",
   hash = "",
+  query = {},
 }: PaginationProps) {
   const totalPages = Math.max(1, Math.ceil(totalcount / limit));
   if (totalPages <= 1) return null;
@@ -24,8 +27,14 @@ export function Pagination({
   const next = page < totalPages ? page + 1 : null;
 
   const hrefFor = (target: number) => {
-    const query = target > 1 ? `?page=${target}` : "";
-    return `${basePath}${query}${hash}`;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      const v = String(value || "").trim();
+      if (v) params.set(key, v);
+    }
+    if (target > 1) params.set("page", String(target));
+    const qs = params.toString();
+    return `${basePath}${qs ? `?${qs}` : ""}${hash}`;
   };
 
   return (
