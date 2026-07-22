@@ -1,8 +1,10 @@
 import { BlogGrid } from "@/components/common/BlogGrid";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Pagination } from "@/components/common/Pagination";
+import { CategorySidebar } from "@/components/sections/CategorySidebar";
 import { siteHref } from "@/lib/paths";
 import type { BlogListItem } from "@/types/blog";
+import type { Category } from "@/types/category";
 
 type LatestPostsProps = {
   posts: BlogListItem[];
@@ -14,6 +16,7 @@ type LatestPostsProps = {
   description?: string;
   emptyTitle: string;
   emptyMessage: string;
+  categories?: Category[];
 };
 
 export async function LatestPosts({
@@ -26,40 +29,45 @@ export async function LatestPosts({
   description = "Curated reads from the blog.",
   emptyTitle,
   emptyMessage,
+  categories = [],
 }: LatestPostsProps) {
   const homePath = await siteHref("/");
+  const showSidebar = categories.length > 0;
+  const showDescription = Boolean(String(description || "").trim());
 
   return (
     <section
       id="blogs"
-      className="stories-section relative scroll-mt-8 bg-ink px-5 py-16 sm:px-8 sm:py-24"
+      className="stories-section relative scroll-mt-8 bg-ink px-5 py-8 sm:px-8 sm:py-10"
       aria-labelledby="blogs-heading"
     >
       <div className="mx-auto w-full max-w-6xl">
-        <div className="stories-section__header mb-10 flex flex-col gap-6 border-b border-line pb-8 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
+        <div className="stories-section__header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <p className="font-display text-xs uppercase tracking-[0.2em] text-steel-bright">
               {eyebrow}
             </p>
             <h2
               id="blogs-heading"
-              className="mt-3 font-display text-3xl font-semibold tracking-tight text-fog sm:text-4xl"
+              className="mt-2 font-display text-2xl font-semibold tracking-tight text-fog sm:text-3xl"
             >
               {heading}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-fog-muted">
-              {description}
-            </p>
+            {showDescription ? (
+              <p className="mt-2 text-sm leading-relaxed text-fog-muted sm:text-base">
+                {description}
+              </p>
+            ) : null}
           </div>
           {totalcount > 0 ? (
             <div
-              className="stories-section__count flex min-w-[5.5rem] flex-col items-center justify-center rounded-2xl border border-amber/30 bg-ink-soft px-5 py-4"
+              className="stories-section__count flex min-w-[5rem] flex-col items-center justify-center rounded-xl border border-amber/30 bg-ink-soft px-4 py-3"
               aria-hidden
             >
-              <span className="stories-section__count-value font-display text-3xl font-bold leading-none text-amber-soft">
+              <span className="stories-section__count-value font-display text-2xl font-bold leading-none text-amber-soft">
                 {totalcount}
               </span>
-              <span className="stories-section__count-label mt-1 font-display text-[0.65rem] uppercase tracking-[0.2em] text-fog-muted">
+              <span className="stories-section__count-label mt-1 font-display text-[0.62rem] uppercase tracking-[0.2em] text-fog-muted">
                 posts
               </span>
             </div>
@@ -68,6 +76,22 @@ export async function LatestPosts({
 
         {posts.length === 0 ? (
           <EmptyState title={emptyTitle} message={emptyMessage} />
+        ) : showSidebar ? (
+          <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <CategorySidebar categories={categories} />
+            </div>
+            <div className="min-w-0">
+              <BlogGrid posts={posts} compact />
+              <Pagination
+                page={page}
+                totalcount={totalcount}
+                limit={limit}
+                basePath={homePath}
+                hash="#blogs"
+              />
+            </div>
+          </div>
         ) : (
           <>
             <BlogGrid posts={posts} />

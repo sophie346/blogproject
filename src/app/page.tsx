@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Categories } from "@/components/sections/Categories";
 import { FeaturedPosts } from "@/components/sections/FeaturedPosts";
 import { Hero } from "@/components/sections/Hero";
 import { LatestPosts } from "@/components/sections/LatestPosts";
@@ -82,11 +81,8 @@ export default async function Home({ searchParams }: HomeProps) {
         description={tenant.copy.storiesDescription}
         emptyTitle={emptyTitle}
         emptyMessage={emptyMessage}
+        categories={tenant.sections.categories ? categories : []}
       />
-
-      {tenant.sections.categories ? (
-        <Categories categories={categories} />
-      ) : null}
 
       {tenant.sections.newsletter ? (
         <Newsletter brandName={tenant.brand.name} />
