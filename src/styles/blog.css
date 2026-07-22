@@ -316,6 +316,33 @@
   color: var(--header-fg);
 }
 
+.theme-header .site-logo__image {
+  max-width: min(160px, 42vw);
+  height: 2.25rem;
+}
+
+@media (min-width: 640px) {
+  .theme-header .site-logo__image {
+    max-width: 220px;
+    height: 2.5rem;
+  }
+}
+
+.theme-header__menu-btn {
+  color: var(--header-fg);
+  border-color: var(--header-border);
+  background: color-mix(in srgb, var(--header-fg) 6%, transparent);
+}
+
+.theme-header__menu-btn:hover {
+  background: color-mix(in srgb, var(--header-fg) 12%, transparent);
+}
+
+.theme-header__mobile {
+  background: var(--header-bg);
+  color: var(--header-fg);
+}
+
 .theme-header__nav-link {
   color: var(--header-muted);
 }

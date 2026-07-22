@@ -77,7 +77,7 @@ export async function LatestPosts({
         {posts.length === 0 ? (
           <EmptyState title={emptyTitle} message={emptyMessage} />
         ) : showSidebar ? (
-          <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
+          <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-6 xl:grid-cols-[220px_minmax(0,1fr)]">
             <div className="lg:sticky lg:top-24 lg:self-start">
               <CategorySidebar categories={categories} />
             </div>

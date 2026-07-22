@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
+import { SiteHeaderNav } from "@/components/layout/SiteHeaderNav";
 import { siteHref } from "@/lib/paths";
 import { getTenant } from "@/lib/tenant";
 
@@ -58,44 +58,17 @@ export default async function Header() {
 
   return (
     <header className="theme-header sticky top-0 z-30 border-b backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-6xl items-center gap-6 px-5 py-3.5 sm:px-8">
-        <Logo />
+      <div className="relative mx-auto flex w-full max-w-6xl items-center gap-3 px-5 py-3 sm:gap-4 sm:px-8 sm:py-3.5">
+        <div className="min-w-0 shrink">
+          <Logo />
+        </div>
 
-        <nav
-          className="ml-auto flex items-center gap-1 sm:gap-2"
-          aria-label="Primary"
-        >
-          {resolvedNav.map((item) =>
-            item.href.startsWith("http") ? (
-              <a
-                key={`${item.label}:${item.href}`}
-                href={item.href}
-                className="theme-header__nav-link rounded-lg px-2.5 py-2 font-display text-xs font-medium transition-colors sm:px-3 sm:text-sm"
-              >
-                {item.label}
-              </a>
-            ) : (
-              <Link
-                key={`${item.label}:${item.href}`}
-                href={item.href}
-                className="theme-header__nav-link rounded-lg px-2.5 py-2 font-display text-xs font-medium transition-colors sm:px-3 sm:text-sm"
-              >
-                {item.label}
-              </Link>
-            )
-          )}
-        </nav>
-
-        <a
-          href={ctaHref}
-          className="theme-header__cta hidden shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-xs font-semibold transition sm:inline-flex"
-          {...(ctaIsExternal
-            ? { target: "_blank", rel: "noopener noreferrer" }
-            : {})}
-        >
-          {ctaLabel}
-          <span aria-hidden>→</span>
-        </a>
+        <SiteHeaderNav
+          items={resolvedNav}
+          ctaLabel={ctaLabel}
+          ctaHref={ctaHref}
+          ctaIsExternal={ctaIsExternal}
+        />
       </div>
     </header>
   );
